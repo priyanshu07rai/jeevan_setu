@@ -27,24 +27,33 @@ print("SMTP HOST:", SMTP_HOST)
 print("SMTP USER:", SMTP_USER)
 print("SMTP FROM:", SMTP_FROM)
 
+import requests
+
 def send_otp_email(to_email, otp):
-    print("SEND OTP FUNCTION CALLED")
+    print("SEND OTP FUNCTION CALLED (VIA HTTP API)")
     subject = "Your OTP Verification Code"
     body = f"Your OTP is: {otp}"
 
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = SMTP_FROM
-    msg["To"] = to_email
-
     try:
-        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=3)
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASS)
-        server.sendmail(SMTP_FROM, to_email, msg.as_string())
-        server.quit()
-        return True
-
+        url = "https://api.brevo.com/v3/smtp/email"
+        headers = {
+            "accept": "application/json",
+            "api-key": SMTP_PASS,
+            "content-type": "application/json"
+        }
+        payload = {
+            "sender": {"email": SMTP_FROM},
+            "to": [{"email": to_email}],
+            "subject": subject,
+            "htmlContent": f"<html><body><p><b>Your Jeevan Setu OTP is: {otp}</b></p></body></html>"
+        }
+        res = requests.post(url, json=payload, headers=headers, timeout=5)
+        if res.status_code in [200, 201, 202]:
+            print("HTTP OTP SENT SUCCESSFULLY!")
+            return True
+        else:
+            print(f"Brevo HTTP Error: {res.text}")
+            return False
     except Exception as e:
         print("OTP FLOW ERROR:", str(e))
         return False
