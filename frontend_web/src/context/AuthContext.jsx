@@ -22,7 +22,6 @@ function clearTokens() {
   localStorage.removeItem(REFRESH_KEY);
 }
 
-// ─── API fetch helper (auto-adds Bearer token, falls back to direct) ──────────
 async function apiFetch(path, options = {}) {
   const token = getStoredToken();
   const headers = {
@@ -31,14 +30,8 @@ async function apiFetch(path, options = {}) {
     ...(options.headers || {}),
   };
 
-  // Try Vite proxy first
-  try {
-    const res = await fetch(path, { ...options, headers });
-    if (res.status !== 404) return res;
-    throw new Error('404');
-  } catch (e) {
-    return fetch(`${API_BASE}${path}`, { ...options, headers });
-  }
+  // Directly fetch against the definitive API Server (which handles Production & Local correctly now)
+  return fetch(`${API_BASE}${path}`, { ...options, headers });
 }
 
 
