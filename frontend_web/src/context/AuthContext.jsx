@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 
 const AuthContext = createContext();
 
-const API_BASE = 'http://localhost:5001';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://jeevansetu-api.onrender.com';
 
 // ─── Token helpers ────────────────────────────────────────────────────────────
 const TOKEN_KEY   = 'jeevan_access_token';
