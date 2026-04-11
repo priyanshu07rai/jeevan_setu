@@ -1,0 +1,10 @@
+{
+  "disaster_type": "Flood",
+  "description": "Testing sync fix by mapping fields with a long enough message",
+  "people_count": 2,
+  "lat": 26.7606,
+  "lon": 83.3732,
+  "phone": "test-phone-or-email",
+  "name": "Test User",
+  "source": "web"
+}
