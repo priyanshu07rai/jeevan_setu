@@ -1,7 +1,7 @@
 // Extract the VITE_API_BASE_URL (e.g. https://your-backend.render.com/api/v2)
 // For local development with Vite proxy, it handles relative paths.
 // For production, we must point to the absolute centralized URL.
-const envBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api/v2';
+const envBase = import.meta.env.VITE_API_BASE_URL || 'https://jeevansetu-api.onrender.com/api/v2';
 
 // In production, BASE_URL should be the full URL.
 // In dev, if using a proxy, it can be the path.

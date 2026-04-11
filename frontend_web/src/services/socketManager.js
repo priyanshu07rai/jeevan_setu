@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api/v2';
+const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://jeevansetu-api.onrender.com/api/v2';
 const SOCKET_URL = apiBase.split('/api')[0];
 
 class SocketManager {
