@@ -5,9 +5,14 @@ from dotenv import load_dotenv
 load_dotenv()
 from app import create_app, socketio
 from db import get_db_connection, release_db_connection, execute, insert_and_get_id
-
 app = create_app(os.getenv('FLASK_ENV') or 'dev')
 
+# Register Namespaced Sockets globally for Gunicorn visibility
+from sockets.admin_socket import register_admin_sockets
+register_admin_sockets(socketio, app)
+
+from sockets.inventory_socket import register_inventory_sockets
+register_inventory_sockets(socketio)
 active_locations = {}
 active_sids = {}
 
@@ -327,11 +332,6 @@ if __name__ == '__main__':
     # Find available port
     base_port = int(os.getenv('PORT', 5001))
     port = get_safe_port(base_port)
-    
-    from sockets.admin_socket import register_admin_sockets
-    register_admin_sockets(socketio, app)
-    from sockets.inventory_socket import register_inventory_sockets
-    register_inventory_sockets(socketio)
     
     print(f" * Disaster Platform Gateway starting on http://0.0.0.0:{port} (Eventlet/Gunicorn Ready)")
     
