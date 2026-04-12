@@ -39,7 +39,8 @@
         {
           "cameraPermission": "Allow Jeevan Setu to attach secure image evidence to emergency pulses."
         }
-      ]
+      ],
+      "expo-notifications"
     ],
     "extra": {
       "eas": {
