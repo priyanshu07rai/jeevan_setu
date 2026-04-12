@@ -3,6 +3,11 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_MAPPLS_REST_KEY": "97bbf6d27ca2705d7605a336504df670",
+        "EXPO_PUBLIC_MAPPLS_CLIENT_ID": "96dHZVzsAuuQIiInMg50iYQicl-TljFZUAfF-TWFlfYmwMP4sAGdUGw3ANGczkgdo8EDm2iUbtiSJoKT3kQ2zg==",
+        "EXPO_PUBLIC_MAPPLS_CLIENT_SECRET": "lrFxI-iSEg_rfZaEqP3mLVOidhBD3Zoq6VDN3ufGy7h1Dyg2Twzo1eulSiev9X1xs207vexWGIUsX4yHgQDLNfJX1pRtCqri"
+      },
       "android": {
         "buildType": "apk"
       }
