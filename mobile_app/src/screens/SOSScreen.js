@@ -8,7 +8,7 @@ import * as Location from 'expo-location';
 import * as SMS from 'expo-sms';
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MapView, { UrlTile, Marker } from 'react-native-maps';
+import MapplsGL from 'mappls-map-react-native';
 import axios from 'axios';
 import { API_BASE } from '../constants';
 
@@ -282,27 +282,30 @@ export default function SOSScreen({ navigation }) {
         {/* ─── LOCKED MAP ─── */}
         <View style={styles.mapCard}>
           {gpsLocked ? (
-            <MapView
-              style={{ height: 220, borderRadius: 20 }}
-              mapType="none"
-              initialRegion={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01
-              }}
+            <MapplsGL.MapView
+              style={{ flex: 1, borderRadius: 20 }}
+              mapplsStyle="mappls_dark"
               scrollEnabled={false}
               zoomEnabled={false}
               pitchEnabled={false}
               rotateEnabled={false}
             >
-              <UrlTile
-                urlTemplate="https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
-                maximumZ={19}
-                flipY={false}
+              <MapplsGL.Camera
+                zoomLevel={15}
+                centerCoordinate={[location.longitude, location.latitude]}
               />
-              <Marker coordinate={location} pinColor={typeInfo.color} />
-            </MapView>
+              <MapplsGL.PointAnnotation
+                id="sos_marker"
+                coordinate={[location.longitude, location.latitude]}
+              >
+                  <View style={{
+                      width: 24, height: 24, borderRadius: 12, 
+                      backgroundColor: typeInfo.color,
+                      borderWidth: 3, borderColor: 'white',
+                      shadowColor: typeInfo.color, shadowOpacity: 0.8, shadowRadius: 8
+                  }} />
+              </MapplsGL.PointAnnotation>
+            </MapplsGL.MapView>
           ) : (
             <View style={styles.mapScan}>
               <ActivityIndicator color="#ef4444" size="large" />

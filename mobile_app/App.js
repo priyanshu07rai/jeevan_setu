@@ -20,7 +20,13 @@ import {
   StatusBar, Modal, Platform
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapplsGL from 'mappls-map-react-native';
 
+// Initialize Mappls SDK Credentials
+MapplsGL.setMapSDKKey(process.env.EXPO_PUBLIC_MAPPLS_REST_KEY || "YOUR_REST_KEY");
+MapplsGL.setRestAPIKey(process.env.EXPO_PUBLIC_MAPPLS_REST_KEY || "YOUR_REST_KEY");
+MapplsGL.setAtlasClientId(process.env.EXPO_PUBLIC_MAPPLS_CLIENT_ID || "YOUR_CLIENT_ID");
+MapplsGL.setAtlasClientSecret(process.env.EXPO_PUBLIC_MAPPLS_CLIENT_SECRET || "YOUR_CLIENT_SECRET");
 import HomeScreen         from './src/screens/HomeScreen';
 import SOSScreen          from './src/screens/SOSScreen';
 import ResourcesScreen    from './src/screens/ResourcesScreen';

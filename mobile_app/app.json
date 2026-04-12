@@ -27,6 +27,7 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      "./plugins/withMappls.js",
       "expo-sqlite",
       [
         "expo-location",

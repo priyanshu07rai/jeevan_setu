@@ -4,7 +4,7 @@ import {
   ActivityIndicator, Animated
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MapView, { Marker, UrlTile } from 'react-native-maps';
+import MapplsGL from 'mappls-map-react-native';
 import axios from 'axios';
 import { API_BASE } from '../constants';
 
@@ -132,26 +132,30 @@ export default function MapDashboardScreen({ navigation }) {
           {disasters.length === 0 && loading ? (
             <View style={styles.mapLoader}><ActivityIndicator color="#10b981" size="large" /></View>
           ) : (
-            <MapView
+            <MapplsGL.MapView
               style={styles.map}
-              initialRegion={region}
-              mapType="none"
+              mapplsStyle="mappls_dark"
             >
-              <UrlTile
-                urlTemplate="https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
-                maximumZ={19}
-                flipY={false}
+              <MapplsGL.Camera
+                zoomLevel={12}
+                centerCoordinate={[region.longitude, region.latitude]}
               />
               {disasters.map(d => (
-                <Marker
+                <MapplsGL.PointAnnotation
                   key={d.id}
-                  coordinate={{ latitude: d.lat, longitude: d.lon }}
+                  id={`marker-${d.id}`}
+                  coordinate={[d.lon, d.lat]}
                   title={d.type || d.disaster_type}
-                  description={d.status}
-                  pinColor={getStatus(d.status).dot}
-                />
+                  snippet={d.status}
+                >
+                  <View style={{
+                      width: 16, height: 16, borderRadius: 8, 
+                      backgroundColor: getStatus(d.status).dot,
+                      borderWidth: 2, borderColor: 'white',
+                  }} />
+                </MapplsGL.PointAnnotation>
               ))}
-            </MapView>
+            </MapplsGL.MapView>
           )}
           {/* Legend */}
           <View style={styles.mapLegend}>
