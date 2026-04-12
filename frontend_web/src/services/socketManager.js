@@ -10,10 +10,12 @@ class SocketManager {
 
   getSocket(namespace = '/') {
     const nsp = namespace === '/' ? '' : namespace;
+    // Connect explicitly to the ROOT url, but specify the namespace in the path suffix
     const url = `${SOCKET_URL}${nsp}`;
 
     if (!this.sockets.has(namespace)) {
       const socket = io(url, {
+        path: '/socket.io', // FORCE socket.io path so the proxy doesnt 404 /admin/socket.io/
         transports: ['websocket', 'polling'], // Prefer websocket
         reconnection: true,
         reconnectionAttempts: Infinity,

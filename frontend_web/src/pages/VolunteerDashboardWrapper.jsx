@@ -18,7 +18,7 @@ export default function VolunteerDashboardWrapper() {
 
     const fetchStatus = async () => {
       try {
-        const res = await fetch(`/api/v2/volunteers/${volId}`);
+        const res = await fetch(`https://jeevansetu-api.onrender.com/api/v2/volunteers/${volId}`);
         if (res.ok) {
           const data = await res.json();
           // Minimal extraction to prevent logic breakage
