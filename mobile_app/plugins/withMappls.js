@@ -1,6 +1,29 @@
-const { withProjectBuildGradle, withAndroidManifest } = require('@expo/config-plugins');
+const { withProjectBuildGradle, withAndroidManifest, withGradleProperties } = require('@expo/config-plugins');
+const fs = require('fs');
+const path = require('path');
 
 const withMappls = (config, props) => {
+  // 1. Hook for android/app/ (Licensing Stubs)
+  // This ensures the build doesn't throw a GradleException if files are missing
+  config = withAndroidManifest(config, (config) => {
+    const projectRoot = config.modRequest.projectRoot;
+    const appDir = path.join(projectRoot, 'android', 'app');
+    
+    // Create directory if it exists (it should after prebuild starts)
+    if (fs.existsSync(appDir)) {
+      const olfFile = path.join(appDir, 'stub.a.olf');
+      const confFile = path.join(appDir, 'stub.a.conf');
+      
+      if (!fs.existsSync(olfFile)) {
+        fs.writeFileSync(olfFile, 'STUB_DATA_FOR_COMPILATION_ONLY');
+      }
+      if (!fs.existsSync(confFile)) {
+        fs.writeFileSync(confFile, 'STUB_DATA_FOR_COMPILATION_ONLY');
+      }
+    }
+    return config;
+  });
+
   // 1. Hook for android/build.gradle (Maven Repository)
   config = withProjectBuildGradle(config, (config) => {
     if (config.modResults.contents.includes('https://maven.mappls.com/repository/mappls/')) {
@@ -17,7 +40,30 @@ const withMappls = (config, props) => {
     return config;
   });
 
-  // 2. Hook for AndroidManifest.xml (Credentials)
+  // 2. Hook for gradle.properties (Mappls Config)
+  config = withGradleProperties(config, (config) => {
+    const properties = [
+      { name: "com.mappls.reactnative.locationEngine", value: "default" },
+      { name: "com.mappls.reactnative.mapplsAndroidSDK", value: "3.2.3" },
+      { name: "com.mappls.reactnative.markerViewSDK", value: "3.1.20" },
+      { name: "com.mappls.reactnative.annotationPluginSDK", value: "3.0.18" },
+      { name: "com.mappls.reactnative.geoanalyticsPluginSDK", value: "3.0.42" },
+      { name: "com.mappls.reactnative.minSdkVersion", value: "21" },
+      { name: "com.mappls.reactnative.targetSdkVersion", value: "34" },
+      { name: "com.mappls.reactnative.compileSdkVersion", value: "34" }
+    ];
+
+    properties.forEach(prop => {
+      const index = config.modResults.findIndex(p => p.key === prop.name);
+      if (index === -1) {
+        config.modResults.push({ type: 'property', key: prop.name, value: prop.value });
+      }
+    });
+
+    return config;
+  });
+
+  // 3. Hook for AndroidManifest.xml (Credentials)
   config = withAndroidManifest(config, (config) => {
     const mainApplication = config.modResults.manifest.application[0];
     
