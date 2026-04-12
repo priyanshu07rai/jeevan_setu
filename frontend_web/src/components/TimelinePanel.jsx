@@ -12,7 +12,7 @@ export default function TimelinePanel({ mapInstance, onPlayTimeline }) {
     useEffect(() => {
         async function fetchTimeline() {
             try {
-                const res = await fetch('http://localhost:5001/api/timeline');
+                const res = await fetch('https://jeevansetu-api.onrender.com/api/timeline');
                 const data = await res.json();
                 setEvents(data);
             } catch (err) {

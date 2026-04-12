@@ -1,9 +1,9 @@
 export async function fetchDisasters() {
-  const response = await fetch("http://localhost:5001/api/disasters")
+  const response = await fetch("https://jeevansetu-api.onrender.com/api/disasters")
   return await response.json()
 }
 
 export async function fetchRisk() {
-  const response = await fetch("http://localhost:5001/api/risk")
+  const response = await fetch("https://jeevansetu-api.onrender.com/api/risk")
   return await response.json()
 }

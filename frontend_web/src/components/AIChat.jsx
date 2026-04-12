@@ -29,7 +29,7 @@ export default function AIChat() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5001/api/v2/ai-assistant', {
+      const response = await fetch('https://jeevansetu-api.onrender.com/api/v2/ai-assistant', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
