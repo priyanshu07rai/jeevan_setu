@@ -27,7 +27,19 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Jeevan Setu to verify your immediate coordinate for rescue squads."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Jeevan Setu to attach secure image evidence to emergency pulses."
+        }
+      ]
     ],
     "extra": {
       "eas": {
