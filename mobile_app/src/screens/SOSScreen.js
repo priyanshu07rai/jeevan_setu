@@ -289,11 +289,9 @@ export default function SOSScreen({ navigation }) {
               zoomEnabled={false}
               pitchEnabled={false}
               rotateEnabled={false}
+              zoomLevel={15}
+              centerCoordinate={[location.longitude, location.latitude]}
             >
-              <MapplsGL.Camera
-                zoomLevel={15}
-                centerCoordinate={[location.longitude, location.latitude]}
-              />
               <MapplsGL.PointAnnotation
                 id="sos_marker"
                 coordinate={[location.longitude, location.latitude]}

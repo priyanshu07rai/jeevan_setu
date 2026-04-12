@@ -135,11 +135,9 @@ export default function MapDashboardScreen({ navigation }) {
             <MapplsGL.MapView
               style={styles.map}
               mapplsStyle="mappls_dark"
+              zoomLevel={12}
+              centerCoordinate={[region.longitude, region.latitude]}
             >
-              <MapplsGL.Camera
-                zoomLevel={12}
-                centerCoordinate={[region.longitude, region.latitude]}
-              />
               {disasters.map(d => (
                 <MapplsGL.PointAnnotation
                   key={d.id}
