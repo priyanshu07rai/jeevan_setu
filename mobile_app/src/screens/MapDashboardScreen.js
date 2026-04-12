@@ -4,7 +4,7 @@ import {
   ActivityIndicator, Animated
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
+import MapView, { Marker, UrlTile } from 'react-native-maps';
 import axios from 'axios';
 import { API_BASE } from '../constants';
 
@@ -135,9 +135,13 @@ export default function MapDashboardScreen({ navigation }) {
             <MapView
               style={styles.map}
               initialRegion={region}
-              provider={PROVIDER_DEFAULT}
-              customMapStyle={mapDarkStyle}
+              mapType="none"
             >
+              <UrlTile
+                urlTemplate="https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
+                maximumZ={19}
+                flipY={false}
+              />
               {disasters.map(d => (
                 <Marker
                   key={d.id}

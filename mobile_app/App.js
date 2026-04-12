@@ -13,8 +13,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as Network from 'expo-network';
 import * as Notifications from 'expo-notifications';
-import * as TaskManager from 'expo-task-manager';
-import * as BackgroundFetch from 'expo-background-fetch';
+// import * as TaskManager from 'expo-task-manager';
+// import * as BackgroundFetch from 'expo-background-fetch';
 import {
   View, Text, TouchableOpacity, StyleSheet, Animated,
   StatusBar, Modal, Platform
@@ -96,25 +96,25 @@ async function checkAndNotify() {
   return null;
 }
 
-// ─── BACKGROUND FETCH TASK ───────────────────────────────────────────────────
+// ─── BACKGROUND FETCH TASK (TEMPORARILY DISABLED) ──────────────────────────────
 // Runs even when the app is terminated / in background
-TaskManager.defineTask(BROADCAST_TASK, async () => {
-  try {
-    await checkAndNotify();
-    return BackgroundFetch.BackgroundFetchResult.NewData;
-  } catch {
-    return BackgroundFetch.BackgroundFetchResult.Failed;
-  }
-});
+// TaskManager.defineTask(BROADCAST_TASK, async () => {
+//   try {
+//     await checkAndNotify();
+//     return BackgroundFetch.BackgroundFetchResult.NewData;
+//   } catch {
+//     return BackgroundFetch.BackgroundFetchResult.Failed;
+//   }
+// });
 
 async function registerBackgroundFetch() {
-  try {
-    await BackgroundFetch.registerTaskAsync(BROADCAST_TASK, {
-      minimumInterval: 15 * 60, // 15 minutes (OS enforced minimum)
-      stopOnTerminate: false,   // keep running after app close (Android)
-      startOnBoot:    true,     // restart after device reboot (Android)
-    });
-  } catch (_) {}
+  // try {
+  //   await BackgroundFetch.registerTaskAsync(BROADCAST_TASK, {
+  //     minimumInterval: 15 * 60, // 15 minutes (OS enforced minimum)
+  //     stopOnTerminate: false,   // keep running after app close (Android)
+  //     startOnBoot:    true,     // restart after device reboot (Android)
+  //   });
+  // } catch (_) {}
 }
 
 // ─── BROADCAST MODAL COMPONENT ────────────────────────────────────────────────
@@ -198,8 +198,8 @@ export default function App() {
         });
       }
 
-      // 3. Register background fetch
-      await registerBackgroundFetch();
+      // 3. Register background fetch (Disabled due to apk crash)
+      // await registerBackgroundFetch();
 
       // 4. Immediate check on launch
       const data = await checkAndNotify();

@@ -18,6 +18,7 @@
     "expo-background-fetch": "~14.0.9",
     "expo-camera": "~17.0.10",
     "expo-constants": "~18.0.13",
+    "expo-dev-client": "~6.0.20",
     "expo-location": "~19.0.8",
     "expo-network": "~8.0.8",
     "expo-notifications": "~0.32.16",
@@ -35,5 +36,9 @@
     "react-native-worklets": "0.5.1",
     "react-native-worklets-core": "^1.6.3"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "babel-preset-expo": "^55.0.17"
+  }
 }

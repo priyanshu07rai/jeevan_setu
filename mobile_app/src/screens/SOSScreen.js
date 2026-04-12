@@ -8,7 +8,7 @@ import * as Location from 'expo-location';
 import * as SMS from 'expo-sms';
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { UrlTile, Marker } from 'react-native-maps';
 import axios from 'axios';
 import { API_BASE } from '../constants';
 
@@ -72,12 +72,6 @@ const retryPendingSOS = async () => {
   }
 };
 
-// Global network listener to auto-retry
-NetInfo.addEventListener(async (state) => {
-  if (state.isConnected) {
-    retryPendingSOS();
-  }
-});
 
 export default function SOSScreen({ navigation }) {
   const [location, setLocation] = useState(null);
@@ -100,7 +94,9 @@ export default function SOSScreen({ navigation }) {
     Animated.timing(headerAnim, { toValue: 1, duration: 500, useNativeDriver: true }).start();
 
     let isMounted = true;
-    (async () => {
+    let locationSub = null;
+
+    const startLocation = async () => {
       try {
         // Safe Parse AsyncStorage User
         const stored = await AsyncStorage.getItem('citizen_user');
@@ -114,20 +110,37 @@ export default function SOSScreen({ navigation }) {
 
       try {
         // Safe Location Fetch
-        let { status } = await Location.requestForegroundPermissionsAsync();
+        const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-          if(isMounted) {
+          if (isMounted) {
             setStatus('GPS Permission Denied');
             setLoadingGPS(false);
           }
           return;
         }
 
-        let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }); // Balanced is safer & faster than High
-        if(!isMounted) return;
-        
-        setLocation(loc.coords);
-        setStatus(`GPS Locked · ${loc.coords.latitude.toFixed(5)}, ${loc.coords.longitude.toFixed(5)}`);
+        const current = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High
+        });
+
+        if (isMounted) {
+          setLocation(current.coords);
+          setStatus(`GPS Locked · ${current.coords.latitude.toFixed(5)}, ${current.coords.longitude.toFixed(5)}`);
+        }
+
+        locationSub = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.High,
+            timeInterval: 5000,
+            distanceInterval: 20
+          },
+          (loc) => {
+            if (isMounted) {
+              setLocation(loc.coords);
+              setStatus(`GPS Locked · ${loc.coords.latitude.toFixed(5)}, ${loc.coords.longitude.toFixed(5)}`);
+            }
+          }
+        );
 
         Animated.loop(
           Animated.sequence([
@@ -136,13 +149,26 @@ export default function SOSScreen({ navigation }) {
           ])
         ).start();
       } catch (locError) {
-        if(isMounted) setStatus('Tower fallback active');
+        console.log("LOCATION CRASH SAFE:", locError);
+        if (isMounted) setStatus('Tower fallback active');
       } finally {
-        if(isMounted) setLoadingGPS(false);
+        if (isMounted) setLoadingGPS(false);
       }
-    })();
+    };
 
-    return () => { isMounted = false; };
+    startLocation();
+
+    const unsubscribe = NetInfo.addEventListener(async (state) => {
+      if (state.isConnected && isMounted) {
+        retryPendingSOS();
+      }
+    });
+
+    return () => { 
+      isMounted = false; 
+      unsubscribe();
+      if (locationSub) locationSub.remove();
+    };
   }, []);
 
   const simulatePhotoUpload = () => {
@@ -257,13 +283,24 @@ export default function SOSScreen({ navigation }) {
         <View style={styles.mapCard}>
           {gpsLocked ? (
             <MapView
-              style={styles.map}
-              initialRegion={{ latitude: location.latitude, longitude: location.longitude, latitudeDelta: 0.004, longitudeDelta: 0.004 }}
+              style={{ height: 220, borderRadius: 20 }}
+              mapType="none"
+              initialRegion={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01
+              }}
               scrollEnabled={false}
               zoomEnabled={false}
               pitchEnabled={false}
               rotateEnabled={false}
             >
+              <UrlTile
+                urlTemplate="https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
+                maximumZ={19}
+                flipY={false}
+              />
               <Marker coordinate={location} pinColor={typeInfo.color} />
             </MapView>
           ) : (
