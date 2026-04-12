@@ -31,8 +31,48 @@ import requests
 
 def send_otp_email(to_email, otp):
     print("SEND OTP FUNCTION CALLED (VIA HTTP API)")
-    subject = "Your OTP Verification Code"
-    body = f"Your OTP is: {otp}"
+    subject = "🔐 Your Jeevan Setu OTP Verification Code"
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #0b1220; font-family: Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #0b1220; padding: 40px 15px;">
+            <tr>
+                <td align="center">
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width: 500px; background-color: #141b2d; border-radius: 16px; border: 1px solid #1f2937; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                        <tr>
+                            <td align="center" style="padding: 40px 30px; border-bottom: 1px solid #1f2937;">
+                                <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold; letter-spacing: 1px;">Jeevan Setu</h1>
+                                <p style="margin: 10px 0 0 0; color: #ff6a00; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">Citizen Identity Verification</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" style="padding: 40px 30px;">
+                                <p style="margin: 0 0 25px 0; color: #9ca3af; font-size: 16px; line-height: 24px;">Please use the verification code below to securely authenticate your access.</p>
+                                <div style="background-color: #0b1220; border: 2px dashed #ff6a00; border-radius: 12px; padding: 20px; display: inline-block;">
+                                    <span style="font-family: 'Courier New', Courier, monospace; font-size: 38px; font-weight: bold; color: #ffffff; letter-spacing: 6px; padding-left: 6px;">{otp}</span>
+                                </div>
+                                <p style="margin: 25px 0 0 0; color: #ef4444; font-size: 14px; font-weight: 600;">&#9888; Valid for 10 minutes</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" style="padding: 30px; background-color: #0f172a; border-top: 1px solid #1f2937;">
+                                <p style="margin: 0 0 10px 0; color: #6b7280; font-size: 12px;">If you didn't request this, please ignore this email.</p>
+                                <p style="margin: 0; color: #4b5563; font-size: 12px; font-weight: bold;">Jeevan Setu &bull; Unified Disaster Intelligence Platform</p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    """
 
     try:
         url = "https://api.brevo.com/v3/smtp/email"
@@ -42,10 +82,13 @@ def send_otp_email(to_email, otp):
             "content-type": "application/json"
         }
         payload = {
-            "sender": {"email": SMTP_FROM},
+            "sender": {
+                "name": "Jeevan Setu",
+                "email": SMTP_FROM
+            },
             "to": [{"email": to_email}],
             "subject": subject,
-            "htmlContent": f"<html><body><p><b>Your Jeevan Setu OTP is: {otp}</b></p></body></html>"
+            "htmlContent": html_content
         }
         res = requests.post(url, json=payload, headers=headers, timeout=5)
         if res.status_code in [200, 201, 202]:
