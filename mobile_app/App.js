@@ -20,13 +20,18 @@ import {
   StatusBar, Modal, Platform
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MapplsGL, { MapplsAccountManager } from 'mappls-map-react-native';
+import MapplsGL, { 
+  setMapSDKKey, 
+  setRestAPIKey, 
+  setAtlasClientId, 
+  setAtlasClientSecret 
+} from 'mappls-map-react-native';
 
 // Initialize Mappls SDK Credentials
-MapplsAccountManager.setMapSDKKey(process.env.EXPO_PUBLIC_MAPPLS_REST_KEY || "YOUR_REST_KEY");
-MapplsAccountManager.setRestAPIKey(process.env.EXPO_PUBLIC_MAPPLS_REST_KEY || "YOUR_REST_KEY");
-MapplsAccountManager.setAtlasClientId(process.env.EXPO_PUBLIC_MAPPLS_CLIENT_ID || "YOUR_CLIENT_ID");
-MapplsAccountManager.setAtlasClientSecret(process.env.EXPO_PUBLIC_MAPPLS_CLIENT_SECRET || "YOUR_CLIENT_SECRET");
+setMapSDKKey(process.env.EXPO_PUBLIC_MAPPLS_REST_KEY || "YOUR_REST_KEY");
+setRestAPIKey(process.env.EXPO_PUBLIC_MAPPLS_REST_KEY || "YOUR_REST_KEY");
+setAtlasClientId(process.env.EXPO_PUBLIC_MAPPLS_CLIENT_ID || "YOUR_CLIENT_ID");
+setAtlasClientSecret(process.env.EXPO_PUBLIC_MAPPLS_CLIENT_SECRET || "YOUR_CLIENT_SECRET");
 import HomeScreen         from './src/screens/HomeScreen';
 import SOSScreen          from './src/screens/SOSScreen';
 import ResourcesScreen    from './src/screens/ResourcesScreen';
