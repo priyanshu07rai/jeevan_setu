@@ -15,7 +15,7 @@ export default function VolunteerInventoryCard() {
   const fetchInitialData = async () => {
     if (!volId) return;
     try {
-      const res = await fetch('/api/v2/admin/volunteer-inventory');
+      const res = await fetch('https://jeevansetu-api.onrender.com/api/v2/admin/volunteer-inventory');
       const data = await res.json();
       if (Array.isArray(data)) {
         const myInv = data.find(d => String(d.volunteer_id) === String(volId));

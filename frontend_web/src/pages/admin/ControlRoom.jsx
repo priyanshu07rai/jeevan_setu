@@ -94,8 +94,8 @@ export default function ControlRoom() {
     const fetchInitialFallback = async () => {
       try {
         const [invRes, actRes] = await Promise.all([
-            fetch('/api/v2/admin/inventory'),
-            fetch('/api/v2/admin/activity')
+            fetch('https://jeevansetu-api.onrender.com/api/v2/admin/inventory'),
+            fetch('https://jeevansetu-api.onrender.com/api/v2/admin/activity')
         ]);
         if (active && invRes.ok) {
             const invDat = await invRes.json();
@@ -128,8 +128,8 @@ export default function ControlRoom() {
     const fetchMarkers = async () => {
        try {
          const [dRes, vRes] = await Promise.all([
-            fetch('/api/v2/disasters'),
-            fetch('/api/v2/admin/team/map')
+            fetch('https://jeevansetu-api.onrender.com/api/v2/disasters'),
+            fetch('https://jeevansetu-api.onrender.com/api/v2/admin/team/map')
          ]);
          
          if (active && dRes.ok && vRes.ok) {

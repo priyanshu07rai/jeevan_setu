@@ -20,7 +20,7 @@ function RegisterModal({ onClose, onSave }) {
     if (!name.trim() || !code.trim()) { setErr('Name and Access Code are required.'); return; }
     setSaving(true); setErr('');
     try {
-      const r = await fetch('/api/v2/volunteers', {
+      const r = await fetch('https://jeevansetu-api.onrender.com/api/v2/volunteers', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name.trim(), skills: skills.trim() || 'Field Operations', access_code: code.trim() })
       });
@@ -625,7 +625,7 @@ export default function VolunteerPage() {
 
   const loadVolunteers = async () => {
     try {
-      const r = await fetch('/api/v2/volunteers');
+      const r = await fetch('https://jeevansetu-api.onrender.com/api/v2/volunteers');
       const data = r.ok ? await r.json() : [];
       if (Array.isArray(data)) {
         setVolunteers(data);

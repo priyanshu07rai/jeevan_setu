@@ -10,7 +10,7 @@ export default function AppShell({ children, title, sub, rightChips, activeAlert
   useEffect(() => {
     const checkBroadcast = async () => {
       try {
-        const r = await fetch('/api/v2/broadcast/latest');
+        const r = await fetch('https://jeevansetu-api.onrender.com/api/v2/broadcast/latest');
         const data = await r.json();
         if (data && data.id) {
           const lastSeen = localStorage.getItem('last_broadcast_id');

@@ -25,7 +25,7 @@ export default function Home() {
     try {
       const [d, v, s, act, dn] = await Promise.all([
         fetchDisasters(), fetchVolunteers(), fetchShelters(), fetchActivity(),
-        fetch('/api/v2/donations/top').then(r => r.ok ? r.json() : []).catch(() => [])
+        fetch('https://jeevansetu-api.onrender.com/api/v2/donations/top').then(r => r.ok ? r.json() : []).catch(() => [])
       ]);
       setActivity(Array.isArray(act) ? act : []);
       const validatedDonors = Array.isArray(dn) ? dn : [];

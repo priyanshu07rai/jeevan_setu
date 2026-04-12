@@ -10,9 +10,9 @@ export default function FieldInventorySync() {
   const fetchData = async () => {
     try {
       const [invRes, reqRes, matRes] = await Promise.all([
-        fetch('/api/v2/admin/volunteer-inventory'),
-        fetch('/api/v2/admin/inventory-requests'),
-        fetch('/api/v2/admin/inventory-matches'),
+        fetch('https://jeevansetu-api.onrender.com/api/v2/admin/volunteer-inventory'),
+        fetch('https://jeevansetu-api.onrender.com/api/v2/admin/inventory-requests'),
+        fetch('https://jeevansetu-api.onrender.com/api/v2/admin/inventory-matches'),
       ]);
       const invData = await invRes.json();
       const reqData = await reqRes.json();

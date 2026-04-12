@@ -34,7 +34,7 @@ export default function AdminDashboard() {
     if (activeTab === 'team') {
        const loadTeam = async () => {
          try {
-           const res = await fetch('/api/v2/admin/team/map');
+           const res = await fetch('https://jeevansetu-api.onrender.com/api/v2/admin/team/map');
            const dt = await res.json();
            setTeamMap(Array.isArray(dt) ? dt : []);
          } catch(e){}
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
     try {
       const [d, v, s, act, dn] = await Promise.all([
         fetchDisasters(), fetchVolunteers(), fetchShelters(), fetchActivity(),
-        fetch('/api/v2/donations/top').then(r => r.ok ? r.json() : []).catch(() => [])
+        fetch('https://jeevansetu-api.onrender.com/api/v2/donations/top').then(r => r.ok ? r.json() : []).catch(() => [])
       ]);
       setData({ 
         disasters: Array.isArray(d) ? d : [], 
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
   const handleAddTeamSubmit = async () => {
     if (!newTeamPayload.name) return;
     try {
-      await fetch('/api/v2/volunteers', {
+      await fetch('https://jeevansetu-api.onrender.com/api/v2/volunteers', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ 
            name: newTeamPayload.name, 
@@ -187,7 +187,7 @@ export default function AdminDashboard() {
     setDispatchTargetZone(null);
 
     try {
-      await fetch('/api/v2/dispatch', {
+      await fetch('https://jeevansetu-api.onrender.com/api/v2/dispatch', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ volunteer_id: volunteerId, report_ids: alerts.map(a => a.id) })
       });
@@ -229,7 +229,7 @@ export default function AdminDashboard() {
        setResolvedZones(prev => [{...completedZone, id: `R-${volunteerId}-${Date.now()}`}, ...prev]);
     }
     try {
-      await fetch('/api/v2/missions/complete', {
+      await fetch('https://jeevansetu-api.onrender.com/api/v2/missions/complete', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ volunteer_id: volunteerId })
       });
@@ -240,7 +240,7 @@ export default function AdminDashboard() {
   const handleSendBroadcast = async () => {
     if (!broadcastMsg) return;
     try {
-      await fetch('/api/v2/broadcast', {
+      await fetch('https://jeevansetu-api.onrender.com/api/v2/broadcast', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ message: broadcastMsg })
       });
