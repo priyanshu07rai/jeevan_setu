@@ -6,11 +6,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import * as SMS from 'expo-sms';
-import * as Network from 'expo-network';
+import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
-import { queuePacket } from '../db';
 import { API_BASE } from '../constants';
 
 const { width } = Dimensions.get('window');
@@ -24,6 +23,61 @@ const TYPE_CONFIG = {
   Conflict:   { icon: '⚠️', color: '#f43f5e' },
   Other:      { icon: '📍', color: '#8b5cf6' },
 };
+
+// --- ROBUST OFFLINE QUEUE UTILS ---
+const saveOfflineSOS = async (payload) => {
+  try {
+    const existing = JSON.parse(
+      (await AsyncStorage.getItem("offline_sos_queue")) || "[]"
+    );
+
+    existing.push({
+      ...payload,
+      createdAt: Date.now(),
+      synced: false,
+    });
+
+    await AsyncStorage.setItem(
+      "offline_sos_queue",
+      JSON.stringify(existing)
+    );
+  } catch(e) {
+    console.error("SOS offline save failed:", e);
+  }
+};
+
+const retryPendingSOS = async () => {
+  try {
+    const queue = JSON.parse(
+      (await AsyncStorage.getItem("offline_sos_queue")) || "[]"
+    );
+
+    for (const item of queue) {
+      if(item.synced) continue;
+      try {
+        await axios.post(`${API_BASE}/api/v2/citizen/sos`, item);
+        item.synced = true;
+      } catch (e) {
+        // Leave unsynced if API call fails
+      }
+    }
+
+    const remaining = queue.filter((x) => !x.synced);
+    await AsyncStorage.setItem(
+      "offline_sos_queue",
+      JSON.stringify(remaining)
+    );
+  } catch (e) {
+    console.error("Retry SOS failed", e);
+  }
+};
+
+// Global network listener to auto-retry
+NetInfo.addEventListener(async (state) => {
+  if (state.isConnected) {
+    retryPendingSOS();
+  }
+});
 
 export default function SOSScreen({ navigation }) {
   const [location, setLocation] = useState(null);
@@ -40,23 +94,38 @@ export default function SOSScreen({ navigation }) {
   const gpsAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
+    // Retry offline cache passively on screen mount as secondary check
+    retryPendingSOS();
+
     Animated.timing(headerAnim, { toValue: 1, duration: 500, useNativeDriver: true }).start();
 
+    let isMounted = true;
     (async () => {
-      const stored = await AsyncStorage.getItem('citizen_user');
-      if (stored) {
-        const citizen = JSON.parse(stored);
-        setCitizenName(citizen.name);
-      }
-
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setStatus('GPS Permission Denied');
-        setLoadingGPS(false);
-        return;
-      }
       try {
-        let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+        // Safe Parse AsyncStorage User
+        const stored = await AsyncStorage.getItem('citizen_user');
+        if (stored) {
+           try {
+             const citizen = JSON.parse(stored);
+             if(citizen && citizen.name && isMounted) setCitizenName(citizen.name);
+           } catch(e) {}
+        }
+      } catch(e) {}
+
+      try {
+        // Safe Location Fetch
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          if(isMounted) {
+            setStatus('GPS Permission Denied');
+            setLoadingGPS(false);
+          }
+          return;
+        }
+
+        let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }); // Balanced is safer & faster than High
+        if(!isMounted) return;
+        
         setLocation(loc.coords);
         setStatus(`GPS Locked · ${loc.coords.latitude.toFixed(5)}, ${loc.coords.longitude.toFixed(5)}`);
 
@@ -66,11 +135,14 @@ export default function SOSScreen({ navigation }) {
             Animated.timing(gpsAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
           ])
         ).start();
-      } catch {
-        setStatus('Tower fallback active');
+      } catch (locError) {
+        if(isMounted) setStatus('Tower fallback active');
+      } finally {
+        if(isMounted) setLoadingGPS(false);
       }
-      setLoadingGPS(false);
     })();
+
+    return () => { isMounted = false; };
   }, []);
 
   const simulatePhotoUpload = () => {
@@ -94,41 +166,45 @@ export default function SOSScreen({ navigation }) {
       lat, lng,
       disaster_type: disasterType,
       description,
-      people_count: Number(peopleTrapped),
+      people_count: Number(peopleTrapped) || 0,
       name: citizenName,
       phone: 'Citizen Device',
       evidence: evidence || 'No photo',
       timestamp: new Date().toISOString(),
-      status: 'pending_sync',
     };
 
-    const net = await Network.getNetworkStateAsync();
-
-    if (!net.isConnected) {
-      queuePacket(packet);
-      const avail = await SMS.isAvailableAsync();
-      if (avail) {
-        const msg = `SOS#${disasterType}#LAT:${lat.toFixed(4)}#LON:${lng.toFixed(4)}#PPL:${peopleTrapped}#DESC:${description.substring(0, 20)}`;
-        await SMS.sendSMSAsync(['+1234567890'], msg);
-        Alert.alert('Offline Signal Dispatched', 'Saved locally and SMS gateway opened.');
-      } else {
-        Alert.alert('Signal Queued', 'Safely stored in offline sync mesh.');
-      }
-      setIsSubmitting(false);
-      navigation.goBack();
-      return;
-    }
-
     try {
-      await axios.post(`${API_BASE}/api/v2/mobile/sos`, packet);
-      Alert.alert('Signal Transmitted', 'HQ has received your emergency dispatch.');
-      navigation.goBack();
-    } catch {
-      queuePacket(packet);
-      Alert.alert('Signal Queued', 'Network disrupted. Stored for auto-retry.');
-      navigation.goBack();
+      // Offline-First Flow
+      const net = await NetInfo.fetch();
+
+      if (!net.isConnected) {
+        await saveOfflineSOS(packet);
+        Alert.alert('Offline Mode Active', 'SOS saved locally, syncing when signal returns.');
+        
+        try {
+          // Attempt SMS Gateway Fallback if possible
+          const avail = await SMS.isAvailableAsync();
+          if (avail) {
+            const msg = `SOS#${disasterType}#LAT:${lat.toFixed(4)}#LON:${lng.toFixed(4)}#PPL:${peopleTrapped}#DESC:${description.substring(0, 20)}`;
+            const { result } = await SMS.sendSMSAsync([], msg); // Emptied array to avoid hard crash without default number
+          }
+        } catch(e) {}
+        
+      } else {
+        // Direct Online Flow
+        try {
+          await axios.post(`${API_BASE}/api/v2/citizen/sos`, packet);
+          Alert.alert('Signal Transmitted', 'HQ has received your emergency dispatch.');
+        } catch(reqFail) {
+          await saveOfflineSOS(packet);
+          Alert.alert('Offline Mode Active', 'SOS saved locally, syncing when signal returns.');
+        }
+      }
+    } catch (e) {
+      Alert.alert('Critical Error', 'Failed to dispatch SOS signal.');
     } finally {
       setIsSubmitting(false);
+      navigation.goBack();
     }
   };
 
