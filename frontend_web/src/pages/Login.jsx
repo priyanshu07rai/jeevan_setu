@@ -95,7 +95,7 @@ export default function Login() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={S.form}>
+        <form onSubmit={handleSubmit} style={S.form} autoComplete="off">
           {otpPending ? (
             <div style={S.inputGroup}>
               <div style={{ fontSize: 13, color: '#10b981', textAlign: 'center', marginBottom: 16, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', padding: '12px', borderRadius: 12 }}>
@@ -116,14 +116,14 @@ export default function Login() {
                     <label style={S.label}>Full Name</label>
                     <div style={S.inputWrapper}>
                       <User size={18} style={S.inputIcon} />
-                      <input type="text" placeholder="Ramesh Kumar" value={fullName} onChange={e => setFullName(e.target.value)} style={S.input} required />
+                      <input type="text" placeholder="Ramesh Kumar" value={fullName} onChange={e => setFullName(e.target.value)} style={S.input} autoComplete="nope" required />
                     </div>
                   </div>
                   <div style={S.inputGroup}>
                     <label style={S.label}>Phone Number (Optional)</label>
                     <div style={S.inputWrapper}>
                       <Phone size={18} style={S.inputIcon} />
-                      <input type="text" placeholder="+91 9876543210" value={phone} onChange={e => setPhone(e.target.value)} style={S.input} />
+                      <input type="text" placeholder="+91 9876543210" value={phone} onChange={e => setPhone(e.target.value)} style={S.input} autoComplete="nope" />
                     </div>
                   </div>
                 </>
@@ -142,6 +142,8 @@ export default function Login() {
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       style={S.input}
+                      autoComplete="off"
+                      data-lpignore="true"
                       required
                     />
                   </div>
@@ -158,6 +160,8 @@ export default function Login() {
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     style={S.input}
+                    autoComplete="new-password"
+                    data-lpignore="true"
                     required
                   />
                 </div>
