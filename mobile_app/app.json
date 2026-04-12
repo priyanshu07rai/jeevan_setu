@@ -27,7 +27,14 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "./plugins/withMappls.js",
+      [
+        "./plugins/withMappls.js",
+        {
+          "restKey": "97bbf6d27ca2705d7605a336504df670",
+          "clientId": "96dHZVzsAuuQIiInMg50iYQicl-TljFZUAfF-TWFlfYmwMP4sAGdUGw3ANGczkgdo8EDm2iUbtiSJoKT3kQ2zg==",
+          "clientSecret": "lrFxI-iSEg_rfZaEqP3mLVOidhBD3Zoq6VDN3ufGy7h1Dyg2Twzo1eulSiev9X1xs207vexWGIUsX4yHgQDLNfJX1pRtCqri"
+        }
+      ],
       "expo-sqlite",
       [
         "expo-location",
