@@ -138,7 +138,11 @@ export default function ControlRoom() {
              setDisasters(Array.isArray(dDat) ? dDat : []);
              setVolunteers(Array.isArray(vDat) ? vDat : []);
          }
-       } catch (e) {}
+       } catch (e) {
+           console.error("Marker fetch issue:", e);
+       } finally {
+           if (active) setLoading(false);
+       }
     };
     
     fetchMarkers();
