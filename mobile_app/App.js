@@ -40,9 +40,11 @@ const Stack            = createStackNavigator();
 // Show alert/sound/badge even when app is in foreground
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge:  true,
+    shouldShowAlert:  true,
+    shouldPlaySound:  true,
+    shouldSetBadge:   true,
+    shouldShowBanner: true,   // Android 14+ banner
+    shouldShowList:   true,   // notification shade list
   }),
 });
 
@@ -75,14 +77,16 @@ async function checkAndNotify() {
       await AsyncStorage.setItem("last_broadcast_id", seenKey);
       console.log('[Broadcast] NEW broadcast detected! Firing notification...');
 
-      // Fire the real system notification
+      // Fire the real system notification — with channelId for Android
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: '🚨 PRIORITY BROADCAST — Command HQ',
-          body:  data.message,
-          sound: true,
-          priority: Notifications.AndroidNotificationPriority.MAX,
-          color:  '#e8630a',
+          title:     '🚨 PRIORITY BROADCAST — Command HQ',
+          body:      data.message,
+          sound:     'default',
+          priority:  Notifications.AndroidNotificationPriority.MAX,
+          color:     '#e8630a',
+          channelId: 'broadcast',
+          data:      { type: 'broadcast', message: data.message },
         },
         trigger: null, // fire immediately
       });
@@ -213,14 +217,17 @@ export default function App() {
         await Notifications.requestPermissionsAsync();
       }
 
-      // Android channel (required)
+      // Android channel — MAX importance, visible on lockscreen
       if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('broadcast', {
-          name:         'Priority Broadcasts',
-          importance:   Notifications.AndroidImportance.MAX,
-          sound:        'default',
-          vibrationPattern: [0, 250, 250, 250],
-          lightColor:   '#e8630a',
+          name:                    'Priority Broadcasts',
+          importance:              Notifications.AndroidImportance.MAX,
+          sound:                   'default',
+          vibrationPattern:        [0, 250, 250, 250],
+          lightColor:              '#e8630a',
+          lockscreenVisibility:    Notifications.AndroidNotificationVisibility.PUBLIC,
+          bypassDnd:               true,
+          showBadge:               true,
         });
       }
 

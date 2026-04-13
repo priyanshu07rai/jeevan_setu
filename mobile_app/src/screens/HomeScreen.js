@@ -209,6 +209,7 @@ const styles = StyleSheet.create({
   headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 },
   pill: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(232,99,10,0.12)', paddingHorizontal: 14, paddingVertical: 7, borderRadius: 30, borderWidth: 1, borderColor: 'rgba(232,99,10,0.2)' },
   pillDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#e8630a', marginRight: 8 },
+  welcomeText: { color: 'rgba(255,255,255,0.55)', fontSize: 11, fontWeight: '800', letterSpacing: 2, marginBottom: 2 },
   pillText: { color: '#e8630a', fontSize: 10, fontWeight: '900', letterSpacing: 2 },
   pillGreen: { backgroundColor: 'rgba(16,185,129,0.1)', paddingHorizontal: 14, paddingVertical: 7, borderRadius: 30, borderWidth: 1, borderColor: 'rgba(16,185,129,0.25)' },
   pillGreenText: { color: '#10b981', fontSize: 10, fontWeight: '900', letterSpacing: 1 },
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
 
   heroTitle: { fontSize: 42, fontWeight: '900', color: 'white', lineHeight: 52, marginBottom: 14 },
   heroAccent: { color: '#e8630a' },
-  heroSub: { color: '#64748b', fontSize: 15, lineHeight: 24, maxWidth: '90%' },
+  heroSub: { color: '#94a3b8', fontSize: 15, lineHeight: 24, maxWidth: '90%' },
 
   offlineBanner: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: 'rgba(239,68,68,0.07)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.25)', borderRadius: 16, padding: 18, marginBottom: 20 },
   offlineIcon: { fontSize: 24 },
@@ -236,20 +237,20 @@ const styles = StyleSheet.create({
   sosBtnSub: { color: 'rgba(239,68,68,0.6)', fontSize: 12, marginTop: 4 },
   sosBtnArrow: { color: 'rgba(239,68,68,0.5)', fontSize: 24, fontWeight: '900' },
 
-  sectionLabel: { color: '#475569', fontSize: 11, fontWeight: '900', letterSpacing: 2, marginBottom: 16 },
+  sectionLabel: { color: '#64748b', fontSize: 11, fontWeight: '900', letterSpacing: 2, marginBottom: 16 },
 
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 36 },
   statBox: { width: (width - 44 - 12) / 2, backgroundColor: '#0d1117', borderRadius: 18, padding: 22, borderWidth: 1, borderColor: '#1f2937', overflow: 'hidden' },
   statAccent: { position: 'absolute', top: 0, left: 0, right: 0, height: 3 },
   statVal: { fontSize: 34, fontWeight: '900', marginBottom: 6 },
-  statLabel: { color: '#475569', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
+  statLabel: { color: '#64748b', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
 
   navRow: { flexDirection: 'row', marginBottom: 36 },
   navCard: { backgroundColor: '#0d1117', borderRadius: 18, padding: 22, borderWidth: 1, borderColor: '#1f2937', alignItems: 'flex-start' },
   navIcon: { fontSize: 28, marginBottom: 14 },
   navTitle: { color: 'white', fontSize: 16, fontWeight: '900', marginBottom: 5 },
-  navSub: { color: '#475569', fontSize: 12 },
+  navSub: { color: '#64748b', fontSize: 12 },
 
   footer: { alignItems: 'center', paddingTop: 10 },
-  footerText: { color: '#1f2937', fontSize: 10, letterSpacing: 1.5, fontWeight: '700' },
+  footerText: { color: '#334155', fontSize: 10, letterSpacing: 1.5, fontWeight: '700' },
 });

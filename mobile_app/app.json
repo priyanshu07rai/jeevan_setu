@@ -25,7 +25,11 @@
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
-        "READ_MEDIA_IMAGES"
+        "READ_MEDIA_IMAGES",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "WAKE_LOCK",
+        "FOREGROUND_SERVICE"
       ],
       "edgeToEdgeEnabled": true,
       "package": "com.priyanshu112211.mobile_app"
