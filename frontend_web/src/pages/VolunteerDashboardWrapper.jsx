@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import VolunteerDashboard from './VolunteerDashboard';
-import MissionStatus from '../components/volunteer/MissionStatus';
 import VolunteerMiniMap from '../components/volunteer/VolunteerMiniMap';
 import VolunteerActivityFeed from '../components/volunteer/VolunteerActivityFeed';
 import VolunteerInventoryCard from '../components/volunteer/VolunteerInventoryCard';
@@ -61,24 +60,7 @@ export default function VolunteerDashboardWrapper() {
       */}
       <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '32px 40px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
           
-          {/* Top: Mission Status */}
-          {isDeployed && <MissionStatus activeMission={activeMission} />}
 
-          {/* Action Context Menu (Optional Safe UI additions) */}
-          {isDeployed && (
-            <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end', marginTop: '-12px', marginBottom: '8px' }}>
-              <button onClick={handleStartMission} 
-                style={{ padding: '12px 24px', borderRadius: '14px', background: 'var(--surface3)', color: 'white', border: '1px solid var(--border)', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s' }}>
-                 Start Mission
-              </button>
-              <button onClick={handleMarkArrived} 
-                style={{ padding: '12px 24px', borderRadius: '14px', background: '#e8630a', color: 'white', border: '1px solid #ff7b2b', fontWeight: 900, cursor: 'pointer', boxShadow: '0 0 20px rgba(232,99,10,0.4)', transition: 'all 0.2s' }}>
-                 Mark Arrived
-              </button>
-            </div>
-          )}
-
-          {/* Master Grid Splitter */}
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2.8fr) minmax(0, 1.2fr)', gap: '32px', alignItems: 'start' }}>
              
              {/* Left Column: Legacy Full-Feature Panel Wrapper */}
@@ -91,13 +73,7 @@ export default function VolunteerDashboardWrapper() {
                 minHeight: '820px',
                 position: 'relative'
              }}>
-                <div style={{ position: 'absolute', top: 18, left: 24, zIndex: 10, pointerEvents: 'none' }}>
-                  <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--mono)', textTransform: 'uppercase', letterSpacing: '2px' }}>
-                    Core Terminal Active
-                  </div>
-                </div>
-                
-                {/* 100% untouched child component */}
+             {/* 100% untouched child component */}
                 <VolunteerDashboard />
              </div>
 
