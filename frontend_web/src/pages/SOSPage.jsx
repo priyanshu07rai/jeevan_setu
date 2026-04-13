@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import { AlertTriangle, Smartphone } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { APK_DOWNLOAD_URL } from '../config/downloadLinks';
+import { APK_DOWNLOAD_URL, APK_QR_URL } from '../config/downloadLinks';
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 const isMobileBrowser = () =>
@@ -47,6 +47,21 @@ function AccessRestrictedOverlay() {
           📱 DOWNLOAD ANDROID APK
         </a>
         <div style={R.apkHelper}>Permanent secure Android install link</div>
+
+        {/* ─── QR CODE ────────────────────────────────────── */}
+        <div style={R.qrWrap}>
+          <a href={APK_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer">
+            <img
+              src={APK_QR_URL}
+              alt="Scan to install JeevanSetu APK on Android"
+              width={140}
+              height={140}
+              style={R.qrImg}
+              loading="lazy"
+            />
+          </a>
+          <div style={R.qrCaption}>Scan to install on Android</div>
+        </div>
 
       </div>
     </div>
@@ -105,6 +120,26 @@ const R = {
     fontSize: 11,
     fontWeight: 600,
     letterSpacing: 0.5,
+    marginBottom: 28,
+  },
+  // ─── QR code block ─────────────────────────────────────────────
+  qrWrap: {
+    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+    padding: '20px 0 4px',
+    borderTop: '1px solid rgba(255,255,255,0.05)',
+  },
+  qrImg: {
+    borderRadius: 12,
+    border: '2px solid rgba(232,99,10,0.3)',
+    boxShadow: '0 0 20px rgba(232,99,10,0.2)',
+    display: 'block',
+  },
+  qrCaption: {
+    color: '#475569',
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
 };
 
