@@ -222,12 +222,14 @@ function VolunteerDetail({ volunteer: initial, onBack }) {
   const [missionSending, setMissionSending] = useState({});
   const chatEndRef = useRef(null);
 
+  const API = 'https://jeevansetu-api.onrender.com';
+
   const loadDetail = async () => {
     try {
       const [v, m, p] = await Promise.all([
-        fetch(`/api/v2/volunteers/${initial.id}`).then(r => r.ok ? r.json() : initial),
-        fetch(`/api/v2/volunteers/${initial.id}/messages`).then(r => r.ok ? r.json() : []),
-        fetch(`/api/v2/volunteers/${initial.id}/proofs`).then(r => r.ok ? r.json() : []),
+        fetch(`${API}/api/v2/volunteers/${initial.id}`).then(r => r.ok ? r.json() : initial),
+        fetch(`${API}/api/v2/volunteers/${initial.id}/messages`).then(r => r.ok ? r.json() : []),
+        fetch(`${API}/api/v2/volunteers/${initial.id}/proofs`).then(r => r.ok ? r.json() : []),
       ]);
       if (v && !v.error) setVolunteer(v);
       if (Array.isArray(m)) setMessages(m);
@@ -244,7 +246,7 @@ function VolunteerDetail({ volunteer: initial, onBack }) {
       const stillActive = updated.some(m => m.status === 'DISPATCHED');
       return { ...prev, missions: updated, status: stillActive ? 'ON_MISSION' : 'AVAILABLE' };
     });
-    try { await fetch(`/api/v2/disasters/${disasterId}/resolve`, { method: 'POST' }); } catch(e) {}
+    try { await fetch(`${API}/api/v2/disasters/${disasterId}/resolve`, { method: 'POST' }); } catch(e) {}
     setResolving(null);
     setTimeout(loadDetail, 800);
   };
@@ -256,7 +258,7 @@ function VolunteerDetail({ volunteer: initial, onBack }) {
     const opt = { id: Date.now(), sender:'admin', message: text, mission_id: null, created_at: new Date().toISOString() };
     setMessages(prev => [...prev, opt]);
     try {
-      await fetch(`/api/v2/volunteers/${initial.id}/messages`, {
+      await fetch(`${API}/api/v2/volunteers/${initial.id}/messages`, {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ message: text, sender:'admin', mission_id: null })
       });
@@ -272,7 +274,7 @@ function VolunteerDetail({ volunteer: initial, onBack }) {
     const opt = { id: Date.now(), sender:'admin', message: text, mission_id: missionId, created_at: new Date().toISOString() };
     setMessages(prev => [...prev, opt]);
     try {
-      await fetch(`/api/v2/volunteers/${initial.id}/messages`, {
+      await fetch(`${API}/api/v2/volunteers/${initial.id}/messages`, {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ message: text, sender:'admin', mission_id: missionId })
       });
@@ -493,7 +495,7 @@ function VolunteerDetail({ volunteer: initial, onBack }) {
                         <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
                           {mProofs.map(p => {
                             const sev = SEV_MAP[p.severity] || SEV_MAP.medium;
-                            const url = `/api/v2/uploads/${p.filename}`;
+                            const url = `${API}/api/v2/uploads/${p.filename}`;
                             return (
                               <div key={p.id} style={{ display:'flex', gap:14, alignItems:'flex-start', background:`${sev.c}06`, border:`1px solid ${sev.c}22`, borderRadius:12, padding:'12px 16px' }}>
                                 <a href={url} target="_blank" rel="noreferrer" style={{ flexShrink:0, display:'block', width:90, height:65, borderRadius:8, overflow:'hidden', background:'#000' }}>
@@ -581,7 +583,7 @@ function VolunteerDetail({ volunteer: initial, onBack }) {
           )}
           {proofs.map(p => {
             const sev = SEV_MAP[p.severity] || SEV_MAP.medium;
-            const url = `/api/v2/uploads/${p.filename}`;
+            const url = `${API}/api/v2/uploads/${p.filename}`;
             return (
               <div key={p.id} style={{ background:'var(--surface2)', border:`1px solid ${sev.c}33`, borderRadius:18, overflow:'hidden' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', padding:'12px 20px', background:`${sev.c}08`, borderBottom:`1px solid ${sev.c}15` }}>
