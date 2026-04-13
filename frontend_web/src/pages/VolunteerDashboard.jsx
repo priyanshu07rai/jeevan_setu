@@ -92,13 +92,15 @@ export default function VolunteerDashboard() {
     return () => navigator.geolocation.clearWatch(watchId);
   }, [volId]);
 
+  const API = 'https://jeevansetu-api.onrender.com';
+
   const loadData = async () => {
     if (!volId) return;
     try {
       const [v, m, p] = await Promise.all([
-        fetch(`/api/v2/volunteers/${volId}`).then(r => r.ok ? r.json() : null),
-        fetch(`/api/v2/volunteers/${volId}/messages`).then(r => r.ok ? r.json() : []),
-        fetch(`/api/v2/volunteers/${volId}/proofs`).then(r => r.ok ? r.json() : []),
+        fetch(`${API}/api/v2/volunteers/${volId}`).then(r => r.ok ? r.json() : null),
+        fetch(`${API}/api/v2/volunteers/${volId}/messages`).then(r => r.ok ? r.json() : []),
+        fetch(`${API}/api/v2/volunteers/${volId}/proofs`).then(r => r.ok ? r.json() : []),
       ]);
       if (v && !v.error) setVolunteer(v);
       if (Array.isArray(m)) setMessages(m);
@@ -139,7 +141,7 @@ export default function VolunteerDashboard() {
     setMessages(prev => [...prev, optimistic]);
     const text = msgInput; setMsgInput('');
     try {
-      await fetch(`/api/v2/volunteers/${volId}/messages`, {
+      await fetch(`${API}/api/v2/volunteers/${volId}/messages`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text, sender: 'volunteer', mission_id: activeMissionId })
       });
@@ -171,7 +173,7 @@ export default function VolunteerDashboard() {
     formData.append('caption', caption);
     if (activeMissionId) formData.append('mission_id', activeMissionId);
     try {
-      const r = await fetch(`/api/v2/volunteers/${volId}/proofs`, { method:'POST', body: formData });
+      const r = await fetch(`${API}/api/v2/volunteers/${volId}/proofs`, { method:'POST', body: formData });
       if (r.ok) {
         setUploadDone(true);
         setSelectedFile(null); setFilePreview(null); setCaption('');
