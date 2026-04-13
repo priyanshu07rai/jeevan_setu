@@ -490,7 +490,7 @@ export default function VolunteerDashboard() {
                 <div style={{ fontSize:12, fontWeight:900, color:'var(--text3)', textTransform:'uppercase', letterSpacing:1.5 }}>Submitted Evidence Log</div>
                 {proofs.map(p => {
                   const sev = SEVERITY.find(s => s.val === p.severity) || SEVERITY[1];
-                  const url = `/api/v2/uploads/${p.filename}`;
+                  const url = `https://jeevansetu-api.onrender.com/api/v2/uploads/${p.filename}`;
                   return (
                     <div key={p.id} style={{ background:'var(--surface2)', border:`1px solid ${sev.color}33`, borderRadius:16, overflow:'hidden' }}>
                       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'12px 20px', background:`${sev.color}08`, borderBottom:`1px solid ${sev.color}15` }}>
