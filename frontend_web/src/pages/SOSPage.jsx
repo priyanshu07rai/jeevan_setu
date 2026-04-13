@@ -1,23 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import { AlertTriangle, Smartphone } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { APK_DOWNLOAD_URL, APK_QR_URL } from '../config/downloadLinks';
+import { APK_DOWNLOAD_URL } from '../config/downloadLinks';
 
-// ── Helpers ───────────────────────────────────────────────────────────────
 const isMobileBrowser = () =>
   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
   (typeof window !== 'undefined' && window.innerWidth < 768);
 
-// ── Access Restricted Overlay (Component) ───────────────────────────────────
 function AccessRestrictedOverlay() {
   return (
     <div style={R.overlay}>
       <div style={R.card}>
         <div style={R.topBar} />
         <div style={R.iconRing}><Smartphone size={42} color="#f43f5e" /></div>
-        
+
         <h2 style={R.title}>Emergency SOS: Mobile Only</h2>
         <p style={R.sub}>
           Mission-critical GPS accuracy is required for rescue operations. Desktop SOS reporting is now disabled to prevent inaccurate dispatch.
@@ -35,35 +33,17 @@ function AccessRestrictedOverlay() {
           STRICT SATELLITE VERIFICATION ACTIVE
         </div>
 
-        {/* ─── QR CODE — PRIMARY ─────────────────────────────────── */}
-        <div style={R.qrSection}>
-          <div style={R.qrLabel}>📷 Point camera here ↓</div>
-          <a href={APK_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
-            <img
-              src={APK_QR_URL}
-              alt="Scan QR to install JeevanSetu APK on Android"
-              width={200}
-              height={200}
-              style={R.qrImg}
-              loading="lazy"
-            />
-          </a>
-          <div style={R.qrSub}>Scan with Google Lens or Camera App</div>
-          <div style={R.qrSubSmall}>APK downloads instantly on your phone</div>
-        </div>
-
-        {/* ─── DOWNLOAD BUTTON — SECONDARY FALLBACK ─────────────── */}
-        <div style={R.orDivider}><span style={R.orText}>or download directly on this device</span></div>
         <a
           href={APK_DOWNLOAD_URL}
           target="_blank"
           rel="noopener noreferrer"
           style={R.apkBtn}
-          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 24px rgba(232,99,10,0.35)'; e.currentTarget.style.background = 'rgba(232,99,10,0.2)'; }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 0 12px rgba(232,99,10,0.1)'; e.currentTarget.style.background = 'rgba(232,99,10,0.12)'; }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 40px rgba(232,99,10,0.6)'; e.currentTarget.style.background = 'linear-gradient(135deg, #f97316, #fb923c)'; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 0 24px rgba(232,99,10,0.35)'; e.currentTarget.style.background = 'linear-gradient(135deg, #e8630a, #f97316)'; }}
         >
           📱 DOWNLOAD ANDROID APK
         </a>
+        <div style={R.apkHelper}>Permanent secure Android install link</div>
 
       </div>
     </div>
@@ -71,10 +51,7 @@ function AccessRestrictedOverlay() {
 }
 
 const R = {
-  overlay: {
-    minHeight: '75vh',
-    display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
-  },
+  overlay: { minHeight: '75vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 },
   card: {
     background: '#111827', borderRadius: 32, border: '1px solid rgba(244,63,94,0.3)',
     padding: '56px 44px', maxWidth: 440, width: '100%', textAlign: 'center',
@@ -86,86 +63,40 @@ const R = {
     display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px',
   },
   title: { color: 'white', fontSize: 26, fontWeight: 900, marginBottom: 14, marginTop: 0 },
-  sub: { color: '#64748b', fontSize: 14, lineHeight: 1.7, marginBottom: 32, marginTop: 0 },
+  sub:   { color: '#64748b', fontSize: 14, lineHeight: 1.7, marginBottom: 32, marginTop: 0 },
   instructionBox: {
-    background: 'rgba(255,255,255,0.03)', border: '1px solid #1f2937', borderRadius: 18, 
-    padding: '24px', textAlign: 'left', marginBottom: 28
+    background: 'rgba(255,255,255,0.03)', border: '1px solid #1f2937', borderRadius: 18,
+    padding: 24, textAlign: 'left', marginBottom: 28,
   },
-  footer: { 
+  footer: {
     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
     color: '#f59e0b', fontSize: 11, fontWeight: 900, letterSpacing: 1.5,
     textTransform: 'uppercase', marginBottom: 28,
   },
-
-  // ─── QR code — PRIMARY ───────────────────────────────────────────
-  qrSection: {
-    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-    padding: '24px 0 20px',
-    borderTop: '1px solid rgba(255,255,255,0.06)',
-  },
-  qrLabel: {
-    color: '#e8630a', fontSize: 12, fontWeight: 900, letterSpacing: 1.5,
-    textTransform: 'uppercase', marginBottom: 4,
-  },
-  qrImg: {
-    borderRadius: 16,
-    border: '3px solid rgba(232,99,10,0.5)',
-    boxShadow: '0 0 32px rgba(232,99,10,0.3), 0 0 64px rgba(232,99,10,0.12)',
-    display: 'block',
-    cursor: 'pointer',
-  },
-  qrSub: {
-    color: 'rgba(255,255,255,0.75)', fontSize: 13, fontWeight: 800, marginTop: 4,
-  },
-  qrSubSmall: {
-    color: '#475569', fontSize: 11, fontWeight: 600, letterSpacing: 0.5,
-  },
-
-  // ─── OR divider ─────────────────────────────────────────────────
-  orDivider: {
-    margin: '20px 0 12px',
-  },
-  orText: {
-    color: '#334155', fontSize: 10, fontWeight: 700, letterSpacing: 1,
-    textTransform: 'uppercase',
-  },
-
-  // ─── Download button — secondary ────────────────────────────────
   apkBtn: {
-    display: 'block', width: '100%', padding: '13px 0', borderRadius: 12,
-    background: 'rgba(232,99,10,0.12)',
-    color: '#f97316', fontWeight: 800, fontSize: 13, letterSpacing: 1,
+    display: 'block', width: '100%', padding: '16px 0', borderRadius: 14,
+    background: 'linear-gradient(135deg, #e8630a, #f97316)',
+    color: 'white', fontWeight: 900, fontSize: 14, letterSpacing: 1.2,
     textDecoration: 'none', textAlign: 'center',
-    border: '1px solid rgba(232,99,10,0.3)',
-    boxShadow: '0 0 12px rgba(232,99,10,0.1)',
+    boxShadow: '0 0 24px rgba(232,99,10,0.35)',
     transition: 'all 0.2s ease', cursor: 'pointer',
+    animation: 'apkPulse 2.5s infinite',
   },
+  apkHelper: { marginTop: 12, color: '#475569', fontSize: 11, fontWeight: 600, letterSpacing: 0.5 },
 };
 
 export default function SOSPage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  
+
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/login?role=Citizen');
-    }
+    if (!loading && !user) navigate('/login?role=Citizen');
   }, [user, loading, navigate]);
 
-  // ── Desktop View (Message Only) ──────────────────────────────────────────
-  if (!isMobileBrowser()) {
-    return (
-      <AppShell title="SOS SIGNAL" sub="STRICT GPS VERIFICATION · ANTI-FRAUD LAYER">
-        <AccessRestrictedOverlay />
-        <div style={{ height: '70vh', background: '#080b10' }} />
-      </AppShell>
-    );
-  }
-
-  // ── Mobile View ───────────────────────────────────────────────────────────
   return (
     <AppShell title="SOS SIGNAL" sub="STRICT GPS VERIFICATION · ANTI-FRAUD LAYER">
       <AccessRestrictedOverlay />
+      {!isMobileBrowser() && <div style={{ height: '70vh', background: '#080b10' }} />}
     </AppShell>
   );
 }
