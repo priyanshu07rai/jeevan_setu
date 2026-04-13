@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import { AlertTriangle, Smartphone } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { APK_DOWNLOAD_URL } from '../config/downloadLinks';
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 const isMobileBrowser = () =>
@@ -33,6 +34,20 @@ function AccessRestrictedOverlay() {
           <AlertTriangle size={14} color="#f59e0b" style={{ marginRight: 8 }} />
           STRICT SATELLITE VERIFICATION ACTIVE
         </div>
+
+        {/* ─── APK DOWNLOAD CTA ─────────────────────────────────── */}
+        <a
+          href={APK_DOWNLOAD_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={R.apkBtn}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = R.apkBtnHoverShadow; e.currentTarget.style.background = R.apkBtnHoverBg; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = R.apkBtn.boxShadow; e.currentTarget.style.background = R.apkBtn.background; }}
+        >
+          📱 DOWNLOAD ANDROID APK
+        </a>
+        <div style={R.apkHelper}>Permanent secure Android install link</div>
+
       </div>
     </div>
   );
@@ -61,8 +76,36 @@ const R = {
   },
   footer: { 
     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
-    color: '#f59e0b', fontSize: 11, fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase'
-  }
+    color: '#f59e0b', fontSize: 11, fontWeight: 900, letterSpacing: 1.5,
+    textTransform: 'uppercase', marginBottom: 28,
+  },
+  // ─── APK download button ─────────────────────────────────────────
+  apkBtn: {
+    display: 'block',
+    width: '100%',
+    padding: '16px 0',
+    borderRadius: 14,
+    background: 'linear-gradient(135deg, #e8630a, #f97316)',
+    color: 'white',
+    fontWeight: 900,
+    fontSize: 14,
+    letterSpacing: 1.2,
+    textDecoration: 'none',
+    textAlign: 'center',
+    boxShadow: '0 0 24px rgba(232,99,10,0.35)',
+    transition: 'all 0.2s ease',
+    cursor: 'pointer',
+    animation: 'apkPulse 2.5s infinite',
+  },
+  apkBtnHoverBg:     'linear-gradient(135deg, #f97316, #fb923c)',
+  apkBtnHoverShadow: '0 0 40px rgba(232,99,10,0.6)',
+  apkHelper: {
+    marginTop: 10,
+    color: '#475569',
+    fontSize: 11,
+    fontWeight: 600,
+    letterSpacing: 0.5,
+  },
 };
 
 export default function SOSPage() {

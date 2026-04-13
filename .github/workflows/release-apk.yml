@@ -1,0 +1,64 @@
+name: Release Android APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: mobile_app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: mobile_app
+        run: npm ci
+
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build preview APK via EAS
+        working-directory: mobile_app
+        run: |
+          eas build \
+            --platform android \
+            --profile preview \
+            --non-interactive \
+            --output ./JeevanSetu.apk
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Create GitHub Release & upload APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "JeevanSetu Android ${{ github.ref_name }}"
+          body: |
+            ## 🚀 JeevanSetu Android APK ${{ github.ref_name }}
+
+            Download the APK directly and install on any Android device.
+
+            ### Installation
+            1. Download **JeevanSetu.apk** below
+            2. Enable **Install from unknown sources** on your device
+            3. Install and open — your account is already synced
+
+            ### Changelog
+            See [commit history](https://github.com/priyanshu07rai/jeevan_setu/commits/main) for full details.
+          files: mobile_app/JeevanSetu.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

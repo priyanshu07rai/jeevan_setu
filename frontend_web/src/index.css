@@ -613,3 +613,10 @@ body {
 .pulsing-red { animation: pulse-red 2s infinite; }
 @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.7); } 70% { box-shadow: 0 0 0 10px rgba(255,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0); } }
 .pulsing-generic { animation: pin-pulse 2s infinite; }
+
+/* ── APK Download button pulse ── */
+@keyframes apkPulse {
+  0%, 100% { box-shadow: 0 0 24px rgba(232,99,10,0.35); }
+  50%       { box-shadow: 0 0 44px rgba(232,99,10,0.65); }
+}
+
