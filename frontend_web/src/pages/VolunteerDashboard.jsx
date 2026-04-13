@@ -311,20 +311,20 @@ export default function VolunteerDashboard() {
                     <div style={{ display:'flex', alignItems:'center', gap:12 }}>
                       <span style={{ fontSize:18 }}>{ms.icon}</span>
                       <div>
-                        <div style={{ fontWeight:800, fontSize:14, textTransform:'capitalize' }}>{m.type || 'Disaster'}</div>
-                        <div style={{ fontSize:10, color:'var(--text3)', marginTop:2 }}>{m.created_at ? new Date(m.created_at).toLocaleString() : ''}</div>
+                        <div style={{ fontWeight:800, fontSize:14, textTransform:'capitalize', color:'#e2e8f4' }}>{m.type || 'Disaster'}</div>
+                        <div style={{ fontSize:10, color:'var(--text2)', marginTop:2 }}>{m.created_at ? new Date(m.created_at).toLocaleString() : ''}</div>
                       </div>
                     </div>
                     <div style={{ display:'flex', alignItems:'center', gap:10 }}>
                       <div style={{ fontSize:10, fontWeight:900, color: ms.c, background:`${ms.c}15`, padding:'4px 12px', borderRadius:20 }}>{ms.l}</div>
-                      <div style={{ fontSize:11, color:'var(--text3)' }}>View Details →</div>
+                      <div style={{ fontSize:11, color:'#8899b4' }}>View Details →</div>
                     </div>
                   </div>
                   <div style={{ padding:'16px 24px', display:'grid', gridTemplateColumns:'1fr 2fr 80px', gap:20 }}>
                     <div><div style={{ fontSize:10, color:'var(--text3)', textTransform:'uppercase', letterSpacing:1, marginBottom:5 }}>Location</div>
                       <div style={{ fontSize:12, fontFamily:'var(--mono)', fontWeight:700, color:'var(--accent)' }}>{m.lat?.toFixed(4)}, {m.lon?.toFixed(4)}</div></div>
-                    <div><div style={{ fontSize:10, color:'var(--text3)', textTransform:'uppercase', letterSpacing:1, marginBottom:5 }}>Situation</div>
-                      <div style={{ fontSize:13, lineHeight:1.5 }}>{m.description}</div></div>
+                    <div><div style={{ fontSize:10, color:'#8899b4', textTransform:'uppercase', letterSpacing:1, marginBottom:5 }}>Situation</div>
+                      <div style={{ fontSize:13, lineHeight:1.5, color:'#e2e8f4' }}>{m.description}</div></div>
                     <div><div style={{ fontSize:10, color:'var(--text3)', textTransform:'uppercase', letterSpacing:1, marginBottom:5 }}>Severity</div>
                       <div style={{ fontSize:24, fontWeight:900, color: (m.severity||0) >= 7 ? '#f43f5e' : '#3b82f6' }}>{(m.severity||0).toFixed(1)}</div></div>
                   </div>
@@ -372,7 +372,7 @@ export default function VolunteerDashboard() {
                           {isAdmin ? '📡 Command Center' : '🙋 You'}
                         </div>
                         {msg.message}
-                        <div style={{ fontSize:9, opacity:0.5, marginTop:5 }}>{msg.created_at ? new Date(msg.created_at).toLocaleTimeString() : ''}</div>
+                        <div style={{ fontSize:9, color:'#8899b4', marginTop:5 }}>{msg.created_at ? new Date(msg.created_at).toLocaleTimeString() : ''}</div>
                       </div>
                     </div>
                   );
@@ -547,8 +547,8 @@ export default function VolunteerDashboard() {
               <div style={{ padding:'28px 32px' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:24 }}>
                   <div>
-                    <div style={{ fontSize:11, color:'var(--text3)', textTransform:'uppercase', letterSpacing:2, marginBottom:6 }}>Assignment Detail</div>
-                    <div style={{ fontSize:22, fontWeight:900, textTransform:'capitalize' }}>{ms.icon} {m.type || 'Disaster'}</div>
+                    <div style={{ fontSize:11, color:'#8899b4', textTransform:'uppercase', letterSpacing:2, marginBottom:6 }}>Assignment Detail</div>
+                    <div style={{ fontSize:22, fontWeight:900, textTransform:'capitalize', color:'#e2e8f4' }}>{ms.icon} {m.type || 'Disaster'}</div>
                   </div>
                   <div style={{ display:'flex', alignItems:'center', gap:10 }}>
                     <div style={{ fontSize:10, fontWeight:900, color: ms.c, background:`${ms.c}15`, padding:'6px 14px', borderRadius:20 }}>{ms.l}</div>
@@ -563,14 +563,14 @@ export default function VolunteerDashboard() {
                     { label:'Logged At',       val:m.created_at ? new Date(m.created_at).toLocaleString() : 'N/A', mono:true },
                   ].map((f,i) => (
                     <div key={i} style={{ background:'var(--surface2)', borderRadius:14, padding:'16px' }}>
-                      <div style={{ fontSize:10, color:'var(--text3)', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>{f.label}</div>
-                      <div style={{ fontSize:f.mono ? 12 : 16, fontWeight:900, fontFamily:f.mono?'var(--mono)':undefined, color:f.color||'var(--text1)' }}>{f.val}</div>
+                      <div style={{ fontSize:10, color:'#8899b4', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>{f.label}</div>
+                      <div style={{ fontSize:f.mono ? 12 : 16, fontWeight:900, fontFamily:f.mono?'var(--mono)':undefined, color:f.color||'#e2e8f4' }}>{f.val}</div>
                     </div>
                   ))}
                 </div>
                 <div style={{ background:'var(--surface2)', borderRadius:14, padding:'18px', marginBottom:20 }}>
-                  <div style={{ fontSize:10, color:'var(--text3)', textTransform:'uppercase', letterSpacing:1, marginBottom:10 }}>Situation Description</div>
-                  <div style={{ fontSize:14, lineHeight:1.7 }}>{m.description || 'No description provided.'}</div>
+                  <div style={{ fontSize:10, color:'#8899b4', textTransform:'uppercase', letterSpacing:1, marginBottom:10 }}>Situation Description</div>
+                  <div style={{ fontSize:14, lineHeight:1.7, color:'#e2e8f4' }}>{m.description || 'No description provided.'}</div>
                 </div>
                 <button onClick={() => setSelectedMission(null)}
                   style={{ width:'100%', padding:'14px', background:'var(--surface2)', border:'1px solid var(--border)', borderRadius:14, color:'var(--text2)', fontWeight:700, fontSize:13, cursor:'pointer' }}>
