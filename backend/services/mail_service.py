@@ -3,6 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,6 @@ class MailService:
 
     @staticmethod
     def send_email(to_email, subject, body_text, body_html=None):
-        from datetime import datetime
         server_host = os.environ.get('SMTP_SERVER', 'smtp-relay.brevo.com')
         server_port = int(os.environ.get('SMTP_PORT', 587))
         user = os.environ.get('SMTP_USER', '')

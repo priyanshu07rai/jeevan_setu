@@ -25,6 +25,114 @@ bp = Blueprint('disasters', __name__)
 CORS(bp)
 
 
+# ─── EXPO PUSH NOTIFICATION HELPERS ──────────────────────────────────────
+
+def _ensure_push_table():
+    """Create push_tokens table if it doesn't exist."""
+    try:
+        conn = get_db_connection()
+        cur  = conn.cursor()
+        sql  = adapt_sql("""
+            CREATE TABLE IF NOT EXISTS push_tokens (
+                id         SERIAL  PRIMARY KEY,
+                token      TEXT    NOT NULL UNIQUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cur.execute(sql)
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        logger.warning(f"push_tokens table setup failed: {e}")
+
+_ensure_push_table()
+
+
+def send_push_to_all(title: str, body: str):
+    """Fetch all stored Expo push tokens and send a notification batch."""
+    try:
+        conn = get_db_connection()
+        cur  = conn.cursor()
+        execute(cur, "SELECT token FROM push_tokens")
+        rows   = rows_to_dicts(cur.fetchall())
+        tokens = [r['token'] for r in rows if r.get('token')]
+        cur.close()
+        conn.close()
+    except Exception as e:
+        logger.warning(f"[Push] Could not fetch tokens: {e}")
+        return
+
+    if not tokens:
+        logger.info("[Push] No registered tokens, skipping push.")
+        return
+
+    # Build Expo push batch (max 100 per call)
+    messages = [
+        {
+            "to":    tok,
+            "title": title,
+            "body":  body,
+            "sound": "default",
+            "priority": "high",
+            "channelId": "broadcast",
+            "data": {"type": "broadcast"},
+        }
+        for tok in tokens
+        if tok.startswith("ExponentPushToken") or tok.startswith("ExpoPushToken")
+    ]
+
+    if not messages:
+        return
+
+    try:
+        resp = requests.post(
+            "https://exp.host/--/api/v2/push/send",
+            json=messages,
+            headers={
+                "Accept":       "application/json",
+                "Content-Type": "application/json",
+            },
+            timeout=10,
+        )
+        logger.info(f"[Push] Expo API response: {resp.status_code}")
+    except Exception as e:
+        logger.warning(f"[Push] Expo API call failed: {e}")
+
+
+@bp.route('/push/register', methods=['POST'])
+@cross_origin()
+def push_register():
+    """Store/update an Expo push token for this device."""
+    try:
+        data  = request.json or {}
+        token = (data.get('token') or '').strip()
+        if not token:
+            return jsonify({'error': 'token required'}), 400
+
+        conn = get_db_connection()
+        cur  = conn.cursor()
+        # Upsert: ignore if already exists
+        if IS_POSTGRES:
+            execute(cur,
+                "INSERT INTO push_tokens (token) VALUES (?) ON CONFLICT (token) DO NOTHING",
+                (token,)
+            )
+        else:
+            execute(cur,
+                "INSERT OR IGNORE INTO push_tokens (token) VALUES (?)",
+                (token,)
+            )
+        conn.commit()
+        cur.close()
+        conn.close()
+        logger.info(f"[Push] Token registered: {token[:30]}...")
+        return jsonify({'status': 'registered'}), 200
+    except Exception as e:
+        logger.exception(f"[Push] register failed: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 # ─── SCHEMA MANAGEMENT ───
 # Delegated to unified db.py layer (db.ensure_tables)
 def row_to_dict(row): return db_row_to_dict(row)
@@ -702,16 +810,27 @@ def post_broadcast():
             return jsonify({"error": "message is required"}), 400
         conn = get_db_connection()
         cur = conn.cursor()
-        # Insert new broadcast — active column is BOOLEAN in PostgreSQL, use TRUE
         execute(cur, "INSERT INTO broadcasts (message) VALUES (?)", (msg,))
         conn.commit()
         cur.close()
         conn.close()
+
+        # ── Socket.IO real-time (for foreground apps) ──
         try:
             from app import socketio
             socketio.emit('global_broadcast', {"message": msg})
         except Exception:
             pass
+
+        # ── Expo Push (for background / killed apps) ──
+        try:
+            send_push_to_all(
+                title="🚨 PRIORITY BROADCAST — Command HQ",
+                body=msg,
+            )
+        except Exception as pe:
+            logger.warning(f"[Push] send failed: {pe}")
+
         return jsonify({"status": "success"}), 201
     except Exception as e:
         logger.exception(f"Route failed: {e}")

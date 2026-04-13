@@ -20,11 +20,10 @@ import {
   StatusBar, Modal, Platform
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MapplsGL from 'mappls-map-react-native';
 
-// Mappls SDK initialization moved to native Android Manifest (plugin/withMappls.js)
 import HomeScreen         from './src/screens/HomeScreen';
 import SOSScreen          from './src/screens/SOSScreen';
+import SOSSuccessScreen   from './src/screens/SOSSuccessScreen';
 import ResourcesScreen    from './src/screens/ResourcesScreen';
 import DonorScreen        from './src/screens/DonorScreen';
 import MapDashboardScreen from './src/screens/MapDashboardScreen';
@@ -110,13 +109,38 @@ async function checkAndNotify() {
 // });
 
 async function registerBackgroundFetch() {
-  // try {
-  //   await BackgroundFetch.registerTaskAsync(BROADCAST_TASK, {
-  //     minimumInterval: 15 * 60, // 15 minutes (OS enforced minimum)
-  //     stopOnTerminate: false,   // keep running after app close (Android)
-  //     startOnBoot:    true,     // restart after device reboot (Android)
-  //   });
-  // } catch (_) {}
+  // BackgroundFetch is disabled – we use Expo Push instead for killed-state notifications
+}
+
+// ─── EXPO PUSH TOKEN REGISTRATION ───────────────────────────────────────────
+async function registerPushToken() {
+  try {
+    // Only works in a real build (EAS APK / standalone), not Expo Go
+    const { status } = await Notifications.getPermissionsAsync();
+    if (status !== 'granted') return;
+
+    // Get the Expo push token (backed by FCM on Android)
+    const tokenData = await Notifications.getExpoPushTokenAsync({
+      projectId: 'bb07dcdb-0043-4f5c-a29c-fc0cf35b92d4',
+    });
+    const token = tokenData?.data;
+    if (!token) return;
+
+    console.log('[Push] Expo token:', token);
+
+    // Persist locally
+    await AsyncStorage.setItem('expo_push_token', token);
+
+    // Register with backend
+    await fetch(`${API_BASE}/api/v2/push/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
+    console.log('[Push] Token registered with backend ✓');
+  } catch (e) {
+    console.log('[Push] Token registration skipped:', e.message);
+  }
 }
 
 // ─── BROADCAST MODAL COMPONENT ────────────────────────────────────────────────
@@ -200,8 +224,8 @@ export default function App() {
         });
       }
 
-      // 3. Register background fetch (Disabled due to apk crash)
-      // await registerBackgroundFetch();
+      // 3. Register Expo Push Token (FCM-backed — works when app is killed)
+      registerPushToken();
 
       // 4. Immediate check on launch
       const data = await checkAndNotify();
@@ -257,6 +281,7 @@ export default function App() {
           <Stack.Screen name="Login"          component={LoginScreen}         />
           <Stack.Screen name="Home"           component={HomeScreen}          />
           <Stack.Screen name="SOS"            component={SOSScreen}           />
+          <Stack.Screen name="SOSSuccess"     component={SOSSuccessScreen}    />
           <Stack.Screen name="Resources"      component={ResourcesScreen}     />
           <Stack.Screen name="Donor"          component={DonorScreen}         />
           <Stack.Screen name="MapDashboard"   component={MapDashboardScreen}  />

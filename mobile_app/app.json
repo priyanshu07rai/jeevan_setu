@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -20,6 +19,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES"
+      ],
       "edgeToEdgeEnabled": true,
       "package": "com.priyanshu112211.mobile_app"
     },
@@ -27,14 +34,6 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      [
-        "./plugins/withMappls.js",
-        {
-          "restKey": "97bbf6d27ca2705d7605a336504df670",
-          "clientId": "96dHZVzsAuuQIiInMg50iYQicl-TljFZUAfF-TWFlfYmwMP4sAGdUGw3ANGczkgdo8EDm2iUbtiSJoKT3kQ2zg==",
-          "clientSecret": "lrFxI-iSEg_rfZaEqP3mLVOidhBD3Zoq6VDN3ufGy7h1Dyg2Twzo1eulSiev9X1xs207vexWGIUsX4yHgQDLNfJX1pRtCqri"
-        }
-      ],
       "expo-sqlite",
       [
         "expo-location",
@@ -46,6 +45,13 @@
         "expo-camera",
         {
           "cameraPermission": "Allow Jeevan Setu to attach secure image evidence to emergency pulses."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Jeevan Setu to attach evidence photos to your emergency signal.",
+          "cameraPermission": "Allow Jeevan Setu to capture emergency evidence photos."
         }
       ],
       "expo-notifications"

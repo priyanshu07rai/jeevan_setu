@@ -4,9 +4,49 @@ import {
   ActivityIndicator, Animated
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MapplsGL from 'mappls-map-react-native';
+import { WebView } from 'react-native-webview';
 import axios from 'axios';
 import { API_BASE } from '../constants';
+
+const getDashboardLeafletHTML = (centerLat, centerLng, disasters) => {
+  const markerScript = disasters.map(d => `
+    L.circleMarker([${d.lat}, ${d.lon}], {
+      radius: 8,
+      fillColor: "${STATUS_CONFIG[d.status]?.dot || '#ef4444'}",
+      color: "white",
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 1
+    }).addTo(map).bindPopup("<b>${d.type || d.disaster_type}</b><br>${d.status}");
+  `).join('\n');
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #080b10; }
+        #map { height: 100vh; width: 100vw; }
+        .leaflet-container { background: #080b10 !important; }
+        .leaflet-control-attribution { display: none !important; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map', { zoomControl: false, attributionControl: false }).setView([${centerLat}, ${centerLng}], 12);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 20
+        }).addTo(map);
+        ${markerScript}
+    </script>
+</body>
+</html>
+  `;
+};
 
 const STATUS_CONFIG = {
   RESOLVED:   { color: '#10b981', label: 'Resolved', dot: '#10b981' },
@@ -74,12 +114,8 @@ export default function MapDashboardScreen({ navigation }) {
     return () => clearInterval(iv);
   }, []);
 
-  const region = {
-    latitude:      active.length > 0 ? active[0].lat : 26.7606,
-    longitude:     active.length > 0 ? active[0].lon : 83.3732,
-    latitudeDelta: 0.12,
-    longitudeDelta: 0.12,
-  };
+  const centerLat = active.length > 0 ? active[0].lat : 26.7606;
+  const centerLng = active.length > 0 ? active[0].lon : 83.3732;
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -132,28 +168,11 @@ export default function MapDashboardScreen({ navigation }) {
           {disasters.length === 0 && loading ? (
             <View style={styles.mapLoader}><ActivityIndicator color="#10b981" size="large" /></View>
           ) : (
-            <MapplsGL.MapView
+            <WebView
               style={styles.map}
-              mapplsStyle="mappls_dark"
-              zoomLevel={12}
-              centerCoordinate={[region.longitude, region.latitude]}
-            >
-              {disasters.map(d => (
-                <MapplsGL.PointAnnotation
-                  key={d.id}
-                  id={`marker-${d.id}`}
-                  coordinate={[d.lon, d.lat]}
-                  title={d.type || d.disaster_type}
-                  snippet={d.status}
-                >
-                  <View style={{
-                      width: 16, height: 16, borderRadius: 8, 
-                      backgroundColor: getStatus(d.status).dot,
-                      borderWidth: 2, borderColor: 'white',
-                  }} />
-                </MapplsGL.PointAnnotation>
-              ))}
-            </MapplsGL.MapView>
+              originWhitelist={['*']}
+            source={{ html: getDashboardLeafletHTML(centerLat, centerLng, disasters) }}
+            />
           )}
           {/* Legend */}
           <View style={styles.mapLegend}>
@@ -228,11 +247,3 @@ const styles = StyleSheet.create({
   emptyText: { color: '#334155', fontSize: 14 },
 });
 
-const mapDarkStyle = [
-  { elementType: 'geometry', stylers: [{ color: '#1a1f2e' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#6b7280' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1f2e' }] },
-  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#252c3b' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0d1117' }] },
-  { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#1f2937' }] },
-];

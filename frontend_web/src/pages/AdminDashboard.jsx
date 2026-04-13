@@ -830,7 +830,7 @@ export default function AdminDashboard() {
                            {/* Evidence Image */}
                            {selectedDisaster.image_url ? (
                               <div style={{height:180, borderRadius:16, border:'1px solid var(--border)', overflow:'hidden', background:'black', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                                 <img src={`/api/v2/uploads/${selectedDisaster.image_url}`} style={{maxWidth:'100%', maxHeight:'100%', objectFit:'contain'}} alt="Evidence" />
+                                 <img src={`https://jeevansetu-api.onrender.com/api/v2/uploads/${selectedDisaster.image_url}`} style={{maxWidth:'100%', maxHeight:'100%', objectFit:'contain'}} alt="Evidence" />
                               </div>
                            ) : (
                               <div style={{height:80, borderRadius:16, border:'1px dashed var(--border)', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--text3)', fontSize:11}}>📸 No Evidence Photo Attachments</div>
