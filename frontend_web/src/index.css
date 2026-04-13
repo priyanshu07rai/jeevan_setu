@@ -138,6 +138,10 @@ body {
   cursor: pointer;
   text-transform: uppercase;
   user-select: none;
+  overflow: hidden;
+  max-height: 120px;
+  text-overflow: clip;
+  white-space: nowrap;
 }
 .nav-item {
   width: 42px;

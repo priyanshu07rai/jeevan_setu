@@ -17,6 +17,7 @@ export default function VolunteerDashboard() {
   const [msgInput, setMsgInput] = useState('');
   const [sending, setSending] = useState(false);
   const [activeTab, setActiveTab] = useState('mission');
+  const [selectedMission, setSelectedMission] = useState(null);
   const chatEndRef = useRef(null);
 
   // Emergency coordination state
@@ -236,33 +237,8 @@ export default function VolunteerDashboard() {
           </button>
         </div>
 
-        {/* Active Mission Banner */}
-        {isDeployed && active.length > 0 && (
-          <div style={{ background:'rgba(232,99,10,0.06)', border:'1px solid rgba(232,99,10,0.3)', borderRadius:20, padding:'24px 32px' }}>
-            <div style={{ fontSize:11, fontWeight:900, color:'var(--accent)', textTransform:'uppercase', letterSpacing:2, marginBottom:20, display:'flex', alignItems:'center', gap:10 }}>
-              <div style={{ width:8, height:8, borderRadius:'50%', background:'var(--accent)', animation:'pulse 1.5s infinite' }} />
-              Your Active Assignment
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:16 }}>
-              {[
-                { label:'Incident Type', val: active[0]?.type || 'Unknown' },
-                { label:'GPS Location',  val: active[0] ? `${active[0].lat?.toFixed(4)}, ${active[0].lon?.toFixed(4)}` : 'N/A', mono:true },
-                { label:'Total Incidents', val: active.length },
-              ].map((s,i) => (
-                <div key={i} style={{ background:'rgba(232,99,10,0.08)', borderRadius:14, padding:'18px' }}>
-                  <div style={{ fontSize:10, color:'var(--text3)', textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>{s.label}</div>
-                  <div style={{ fontSize:s.mono ? 12 : 18, fontWeight:900, fontFamily: s.mono ? 'var(--mono)' : undefined, color: s.mono ? 'var(--accent)' : 'var(--text1)' }}>{s.val}</div>
-                </div>
-              ))}
-            </div>
-            {active.map(a => (
-              <div key={a.id} style={{ marginTop:12, background:'rgba(232,99,10,0.05)', border:'1px solid rgba(232,99,10,0.15)', borderRadius:12, padding:'14px 18px', fontSize:13, lineHeight:1.6, color:'var(--text2)' }}>
-                <span style={{ fontWeight:700, color:'var(--accent)', marginRight:8 }}>⚠</span>{a.description}
-              </div>
-            ))}
-          </div>
-        )}
 
+        {/* Standby Banner — shown only when not deployed */}
         {!isDeployed && (
           <div style={{ background:'rgba(16,185,129,0.04)', border:'1px solid rgba(16,185,129,0.2)', borderRadius:20, padding:'24px 32px', display:'flex', alignItems:'center', gap:16 }}>
             <div style={{ fontSize:28 }}>🟢</div>
@@ -294,13 +270,41 @@ export default function VolunteerDashboard() {
         {/* ── ASSIGNMENTS TAB ── */}
         {activeTab === 'mission' && (
           <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+
+            {/* Inline active banner inside tab */}
+            {isDeployed && active.length > 0 && (
+              <div style={{ background:'rgba(232,99,10,0.06)', border:'1px solid rgba(232,99,10,0.35)', borderRadius:20, padding:'20px 24px' }}>
+                <div style={{ fontSize:11, fontWeight:900, color:'var(--accent)', textTransform:'uppercase', letterSpacing:2, marginBottom:14, display:'flex', alignItems:'center', gap:10 }}>
+                  <div style={{ width:8, height:8, borderRadius:'50%', background:'var(--accent)', animation:'pulse 1.5s infinite' }} />
+                  Active Assignment
+                </div>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:12 }}>
+                  {[
+                    { label:'Incident Type', val: active[0]?.type || 'Unknown' },
+                    { label:'GPS Location',  val: active[0] ? `${active[0].lat?.toFixed(4)}, ${active[0].lon?.toFixed(4)}` : 'N/A', mono:true },
+                    { label:'Active Count',  val: active.length },
+                  ].map((s,i) => (
+                    <div key={i} style={{ background:'rgba(232,99,10,0.08)', borderRadius:12, padding:'14px' }}>
+                      <div style={{ fontSize:10, color:'var(--text3)', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>{s.label}</div>
+                      <div style={{ fontSize:s.mono ? 11 : 16, fontWeight:900, fontFamily: s.mono ? 'var(--mono)' : undefined, color: s.mono ? 'var(--accent)' : 'var(--text1)' }}>{s.val}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {missions.length === 0 && (
               <div style={{ textAlign:'center', padding:60, color:'var(--text3)', fontSize:13, background:'var(--surface2)', borderRadius:20, border:'1px solid var(--border)' }}>No assignments yet.</div>
             )}
             {missions.map(m => {
               const ms = m.status === 'DISPATCHED' ? { c:'#e8630a', l:'IN PROGRESS', icon:'🚧' } : { c:'#10b981', l:'RESOLVED', icon:'✅' };
               return (
-                <div key={m.id} style={{ background:'var(--surface2)', border:`1px solid ${ms.c}33`, borderRadius:18, overflow:'hidden' }}>
+                <div key={m.id}
+                  onClick={() => setSelectedMission(m)}
+                  style={{ background:'var(--surface2)', border:`1px solid ${ms.c}33`, borderRadius:18, overflow:'hidden', cursor:'pointer', transition:'all 0.15s' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor=`${ms.c}88`; e.currentTarget.style.transform='translateY(-2px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor=`${ms.c}33`; e.currentTarget.style.transform=''; }}
+                >
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'14px 24px', background:`${ms.c}08`, borderBottom:`1px solid ${ms.c}22` }}>
                     <div style={{ display:'flex', alignItems:'center', gap:12 }}>
                       <span style={{ fontSize:18 }}>{ms.icon}</span>
@@ -309,7 +313,10 @@ export default function VolunteerDashboard() {
                         <div style={{ fontSize:10, color:'var(--text3)', marginTop:2 }}>{m.created_at ? new Date(m.created_at).toLocaleString() : ''}</div>
                       </div>
                     </div>
-                    <div style={{ fontSize:10, fontWeight:900, color: ms.c, background:`${ms.c}15`, padding:'4px 12px', borderRadius:20 }}>{ms.l}</div>
+                    <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                      <div style={{ fontSize:10, fontWeight:900, color: ms.c, background:`${ms.c}15`, padding:'4px 12px', borderRadius:20 }}>{ms.l}</div>
+                      <div style={{ fontSize:11, color:'var(--text3)' }}>View Details →</div>
+                    </div>
                   </div>
                   <div style={{ padding:'16px 24px', display:'grid', gridTemplateColumns:'1fr 2fr 80px', gap:20 }}>
                     <div><div style={{ fontSize:10, color:'var(--text3)', textTransform:'uppercase', letterSpacing:1, marginBottom:5 }}>Location</div>
@@ -524,6 +531,54 @@ export default function VolunteerDashboard() {
         )}
 
       </div>
+
+      {/* Mission Detail Modal */}
+      {selectedMission && (() => {
+        const m = selectedMission;
+        const ms = m.status === 'DISPATCHED' ? { c:'#e8630a', l:'IN PROGRESS', icon:'🚧' } : { c:'#10b981', l:'RESOLVED', icon:'✅' };
+        return (
+          <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.85)', zIndex:5000, display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(12px)' }}
+            onClick={() => setSelectedMission(null)}>
+            <div style={{ width:520, background:'var(--surface)', border:`1px solid ${ms.c}55`, borderRadius:28, overflow:'hidden', boxShadow:`0 0 60px ${ms.c}22` }}
+              onClick={e => e.stopPropagation()}>
+              <div style={{ height:4, background:`linear-gradient(90deg, ${ms.c}, transparent)` }} />
+              <div style={{ padding:'28px 32px' }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:24 }}>
+                  <div>
+                    <div style={{ fontSize:11, color:'var(--text3)', textTransform:'uppercase', letterSpacing:2, marginBottom:6 }}>Assignment Detail</div>
+                    <div style={{ fontSize:22, fontWeight:900, textTransform:'capitalize' }}>{ms.icon} {m.type || 'Disaster'}</div>
+                  </div>
+                  <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                    <div style={{ fontSize:10, fontWeight:900, color: ms.c, background:`${ms.c}15`, padding:'6px 14px', borderRadius:20 }}>{ms.l}</div>
+                    <button onClick={() => setSelectedMission(null)} style={{ background:'none', border:'1px solid var(--border)', borderRadius:10, width:32, height:32, cursor:'pointer', color:'var(--text3)', fontSize:16 }}>×</button>
+                  </div>
+                </div>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:20 }}>
+                  {[
+                    { label:'GPS Coordinates', val:`${m.lat?.toFixed(5)}, ${m.lon?.toFixed(5)}`, mono:true },
+                    { label:'Severity Score',  val:(m.severity||0).toFixed(1), color:(m.severity||0)>=7?'#f43f5e':'#3b82f6' },
+                    { label:'Status',          val:ms.l, color:ms.c },
+                    { label:'Logged At',       val:m.created_at ? new Date(m.created_at).toLocaleString() : 'N/A', mono:true },
+                  ].map((f,i) => (
+                    <div key={i} style={{ background:'var(--surface2)', borderRadius:14, padding:'16px' }}>
+                      <div style={{ fontSize:10, color:'var(--text3)', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>{f.label}</div>
+                      <div style={{ fontSize:f.mono ? 12 : 16, fontWeight:900, fontFamily:f.mono?'var(--mono)':undefined, color:f.color||'var(--text1)' }}>{f.val}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ background:'var(--surface2)', borderRadius:14, padding:'18px', marginBottom:20 }}>
+                  <div style={{ fontSize:10, color:'var(--text3)', textTransform:'uppercase', letterSpacing:1, marginBottom:10 }}>Situation Description</div>
+                  <div style={{ fontSize:14, lineHeight:1.7 }}>{m.description || 'No description provided.'}</div>
+                </div>
+                <button onClick={() => setSelectedMission(null)}
+                  style={{ width:'100%', padding:'14px', background:'var(--surface2)', border:'1px solid var(--border)', borderRadius:14, color:'var(--text2)', fontWeight:700, fontSize:13, cursor:'pointer' }}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Emergency Alert Modal */}
       {emergencyAlert && (
