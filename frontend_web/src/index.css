@@ -53,6 +53,22 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
+/* ── LEAFLET POPUP OVERRIDE — keep popup light theme against dark global body ── */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #ffffff !important;
+  color: #111111 !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35) !important;
+  border-radius: 12px !important;
+}
+.leaflet-popup-content {
+  color: #111111 !important;
+  margin: 10px 14px !important;
+}
+.leaflet-popup-close-button {
+  color: #555 !important;
+}
+
 /* ── CURSOR GLOW ── */
 #cursor-glow {
   position: fixed;

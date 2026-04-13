@@ -142,17 +142,17 @@ export default function DisasterMap({ disasters, volunteers, shelters, selectedI
                 }}
             >
               <Popup>
-                <div className="p-1 text-black">
-                  <h3 className="font-black uppercase text-red-600 border-b border-red-100 mb-2">{d.disaster_type || d.type}</h3>
-                  <p className="text-[10px] font-medium leading-tight">{d.description}</p>
+                <div style={{ color:'#111', padding:'2px 4px', minWidth:160 }}>
+                  <h3 style={{ fontWeight:900, textTransform:'uppercase', color:'#dc2626', borderBottom:'1px solid #fca5a5', marginBottom:6, fontSize:12 }}>{d.disaster_type || d.type}</h3>
+                  <p style={{ fontSize:10, fontWeight:500, lineHeight:1.5, color:'#222' }}>{d.description}</p>
                   
                   {shelters && shelters.length > 0 && (
-                     <div className="mt-2 text-[8px] p-2 bg-green-50 rounded border border-green-100 italic">
+                     <div style={{ marginTop:6, fontSize:8, padding:'4px 8px', background:'#f0fdf4', borderRadius:4, border:'1px solid #bbf7d0', color:'#166534', fontStyle:'italic' }}>
                         NEAREST SHELTER: {Math.min(...shelters.map(s => getDistance(d.lat, d.lon, s.lat, s.lon)))} km
                      </div>
                   )}
 
-                  <div className="mt-2 text-[9px] font-bold text-gray-500 uppercase">
+                  <div style={{ marginTop:6, fontSize:9, fontWeight:700, color:'#6b7280', textTransform:'uppercase' }}>
                     PRIORITY: {d.priority_score?.toFixed(1) || 'N/A'} | STATUS: {d.status || 'REPORTED'}
                   </div>
                 </div>
@@ -167,9 +167,9 @@ export default function DisasterMap({ disasters, volunteers, shelters, selectedI
           return (
             <Marker key={`vol-${v.id || Math.random()}`} position={[v.lat, v.lon]} icon={volunteerIcon}>
               <Popup>
-                <div className="p-1 text-black">
-                  <h3 className="font-bold text-blue-600">{v.name}</h3>
-                  <p className="text-[10px]">Skills: {v.skills}</p>
+                <div style={{ color:'#111', padding:'2px 4px' }}>
+                  <h3 style={{ fontWeight:700, color:'#2563eb', marginBottom:4, fontSize:12 }}>{v.name}</h3>
+                  <p style={{ fontSize:10, color:'#444' }}>Skills: {v.skills}</p>
                 </div>
               </Popup>
             </Marker>
@@ -182,9 +182,9 @@ export default function DisasterMap({ disasters, volunteers, shelters, selectedI
           return (
             <Marker key={`shelter-${s.id || Math.random()}`} position={[s.lat, s.lon]} icon={shelterIcon}>
               <Popup>
-                <div className="p-1 text-black">
-                  <h3 className="font-bold text-green-600">{s.name}</h3>
-                  <p className="text-[10px]">Capacity: {s.capacity}</p>
+                <div style={{ color:'#111', padding:'2px 4px' }}>
+                  <h3 style={{ fontWeight:700, color:'#16a34a', marginBottom:4, fontSize:12 }}>{s.name}</h3>
+                  <p style={{ fontSize:10, color:'#444' }}>Capacity: {s.capacity}</p>
                 </div>
               </Popup>
             </Marker>
