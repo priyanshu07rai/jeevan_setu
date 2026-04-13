@@ -35,33 +35,35 @@ function AccessRestrictedOverlay() {
           STRICT SATELLITE VERIFICATION ACTIVE
         </div>
 
-        {/* ─── APK DOWNLOAD CTA ─────────────────────────────────── */}
+        {/* ─── QR CODE — PRIMARY ─────────────────────────────────── */}
+        <div style={R.qrSection}>
+          <div style={R.qrLabel}>📷 Point camera here ↓</div>
+          <a href={APK_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+            <img
+              src={APK_QR_URL}
+              alt="Scan QR to install JeevanSetu APK on Android"
+              width={200}
+              height={200}
+              style={R.qrImg}
+              loading="lazy"
+            />
+          </a>
+          <div style={R.qrSub}>Scan with Google Lens or Camera App</div>
+          <div style={R.qrSubSmall}>APK downloads instantly on your phone</div>
+        </div>
+
+        {/* ─── DOWNLOAD BUTTON — SECONDARY FALLBACK ─────────────── */}
+        <div style={R.orDivider}><span style={R.orText}>or download directly on this device</span></div>
         <a
           href={APK_DOWNLOAD_URL}
           target="_blank"
           rel="noopener noreferrer"
           style={R.apkBtn}
-          onMouseEnter={e => { e.currentTarget.style.boxShadow = R.apkBtnHoverShadow; e.currentTarget.style.background = R.apkBtnHoverBg; }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = R.apkBtn.boxShadow; e.currentTarget.style.background = R.apkBtn.background; }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 24px rgba(232,99,10,0.35)'; e.currentTarget.style.background = 'rgba(232,99,10,0.2)'; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 0 12px rgba(232,99,10,0.1)'; e.currentTarget.style.background = 'rgba(232,99,10,0.12)'; }}
         >
           📱 DOWNLOAD ANDROID APK
         </a>
-        <div style={R.apkHelper}>Permanent secure Android install link</div>
-
-        {/* ─── QR CODE ────────────────────────────────────── */}
-        <div style={R.qrWrap}>
-          <a href={APK_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer">
-            <img
-              src={APK_QR_URL}
-              alt="Scan to install JeevanSetu APK on Android"
-              width={140}
-              height={140}
-              style={R.qrImg}
-              loading="lazy"
-            />
-          </a>
-          <div style={R.qrCaption}>Scan to install on Android</div>
-        </div>
 
       </div>
     </div>
@@ -94,52 +96,49 @@ const R = {
     color: '#f59e0b', fontSize: 11, fontWeight: 900, letterSpacing: 1.5,
     textTransform: 'uppercase', marginBottom: 28,
   },
-  // ─── APK download button ─────────────────────────────────────────
-  apkBtn: {
-    display: 'block',
-    width: '100%',
-    padding: '16px 0',
-    borderRadius: 14,
-    background: 'linear-gradient(135deg, #e8630a, #f97316)',
-    color: 'white',
-    fontWeight: 900,
-    fontSize: 14,
-    letterSpacing: 1.2,
-    textDecoration: 'none',
-    textAlign: 'center',
-    boxShadow: '0 0 24px rgba(232,99,10,0.35)',
-    transition: 'all 0.2s ease',
-    cursor: 'pointer',
-    animation: 'apkPulse 2.5s infinite',
-  },
-  apkBtnHoverBg:     'linear-gradient(135deg, #f97316, #fb923c)',
-  apkBtnHoverShadow: '0 0 40px rgba(232,99,10,0.6)',
-  apkHelper: {
-    marginTop: 10,
-    color: '#475569',
-    fontSize: 11,
-    fontWeight: 600,
-    letterSpacing: 0.5,
-    marginBottom: 28,
-  },
-  // ─── QR code block ─────────────────────────────────────────────
-  qrWrap: {
+
+  // ─── QR code — PRIMARY ───────────────────────────────────────────
+  qrSection: {
     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-    padding: '20px 0 4px',
-    borderTop: '1px solid rgba(255,255,255,0.05)',
+    padding: '24px 0 20px',
+    borderTop: '1px solid rgba(255,255,255,0.06)',
+  },
+  qrLabel: {
+    color: '#e8630a', fontSize: 12, fontWeight: 900, letterSpacing: 1.5,
+    textTransform: 'uppercase', marginBottom: 4,
   },
   qrImg: {
-    borderRadius: 12,
-    border: '2px solid rgba(232,99,10,0.3)',
-    boxShadow: '0 0 20px rgba(232,99,10,0.2)',
+    borderRadius: 16,
+    border: '3px solid rgba(232,99,10,0.5)',
+    boxShadow: '0 0 32px rgba(232,99,10,0.3), 0 0 64px rgba(232,99,10,0.12)',
     display: 'block',
+    cursor: 'pointer',
   },
-  qrCaption: {
-    color: '#475569',
-    fontSize: 11,
-    fontWeight: 700,
-    letterSpacing: 1,
+  qrSub: {
+    color: 'rgba(255,255,255,0.75)', fontSize: 13, fontWeight: 800, marginTop: 4,
+  },
+  qrSubSmall: {
+    color: '#475569', fontSize: 11, fontWeight: 600, letterSpacing: 0.5,
+  },
+
+  // ─── OR divider ─────────────────────────────────────────────────
+  orDivider: {
+    margin: '20px 0 12px',
+  },
+  orText: {
+    color: '#334155', fontSize: 10, fontWeight: 700, letterSpacing: 1,
     textTransform: 'uppercase',
+  },
+
+  // ─── Download button — secondary ────────────────────────────────
+  apkBtn: {
+    display: 'block', width: '100%', padding: '13px 0', borderRadius: 12,
+    background: 'rgba(232,99,10,0.12)',
+    color: '#f97316', fontWeight: 800, fontSize: 13, letterSpacing: 1,
+    textDecoration: 'none', textAlign: 'center',
+    border: '1px solid rgba(232,99,10,0.3)',
+    boxShadow: '0 0 12px rgba(232,99,10,0.1)',
+    transition: 'all 0.2s ease', cursor: 'pointer',
   },
 };
 
@@ -163,17 +162,10 @@ export default function SOSPage() {
     );
   }
 
-  // ── Mobile View (Future Expansion) ───────────────────────────────────────
-  // Note: Per user request, the web version is now a "Mobile App Only" gateway.
-  // This section would only render on actual mobile browsers if desired.
+  // ── Mobile View ───────────────────────────────────────────────────────────
   return (
     <AppShell title="SOS SIGNAL" sub="STRICT GPS VERIFICATION · ANTI-FRAUD LAYER">
       <AccessRestrictedOverlay />
-      <div style={{ height: '70vh', background: '#080b10' }}>
-         <Text style={{ color: 'white', textAlign: 'center', marginTop: 100 }}>
-           Please use the mobile app for SOS.
-         </Text>
-      </div>
     </AppShell>
   );
 }
