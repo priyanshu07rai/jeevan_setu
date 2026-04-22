@@ -1,0 +1,31 @@
+# ============================================================
+# Jeevan Setu — Backend Environment Template
+# Copy this as your .env and fill in the values
+# ============================================================
+
+# ✅ NEON DATABASE (Replace with your actual Neon connection string)
+# Get this from: neon.tech → Your Project → Connection Details
+DATABASE_URL=postgresql://neondb_owner:REPLACE_PASSWORD@ep-REPLACE.ap-south-1.aws.neon.tech/neondb?sslmode=require
+
+# Secret key for Flask & JWT (keep the same as before)
+SECRET_KEY=yoursecretkeyhere
+
+# Administrative Command Portal
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=123
+ADMIN_NAME=Command Admin
+
+# Brevo SMTP Configuration (unchanged)
+SMTP_HOST=smtp-relay.brevo.com
+SMTP_PORT=587
+SMTP_USER=a76794001@smtp-brevo.com
+SMTP_PASS=YOUR_BREVO_SMTP_KEY_HERE
+SMTP_FROM=raipritanshi77@gmail.com
+
+# Intelligence Cluster & Async Workers
+REDIS_URL=redis://localhost:6379/0
+CELERY_BROKER_URL=redis://localhost:6379/1
+
+# System Config
+FLASK_APP=run.py
+FLASK_ENV=production
