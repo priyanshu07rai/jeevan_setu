@@ -12,7 +12,7 @@ from datetime import datetime
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-DATABASE_URL = os.environ.get('DATABASE_URL', '')
+DATABASE_URL = os.environ.get('DATABASE_URL', '').strip()  # strip() prevents newline-in-sslmode crash
 
 # Render uses postgres:// which psycopg2 needs as postgresql://
 if DATABASE_URL.startswith('postgres://'):
